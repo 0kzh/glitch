@@ -91,6 +91,7 @@ public abstract class MapObject {
 		int topTile = (int) (y - cheight / 2) / tileSize;
 		int bottomTile = (int) (y + cheight / 2 - 1) / tileSize;
 		
+		
 		if(topTile < 0 || bottomTile >= tileMap.getNumRows() ||
                 leftTile < 0 || rightTile >= tileMap.getNumCols()) {
                 topLeft = topRight = bottomLeft = bottomRight = false;
@@ -106,6 +107,21 @@ public abstract class MapObject {
 		topRight = tr == Tile.BLOCKED;
 		bottomLeft = bl == Tile.BLOCKED;
 		bottomRight = br == Tile.BLOCKED;
+		
+		
+		if(x >= tileMap.getWidth()){
+			x = tileMap.getWidth();
+			bottomRight = true;
+			System.out.println("asdf");
+		}
+		
+		if(x <= cwidth / 2){
+			x = 0;
+			bottomLeft = true;
+		}
+		
+		
+		
 		
 	}
 	
@@ -123,8 +139,16 @@ public abstract class MapObject {
 		calculateCorners(x, ydest);
 		if(dy < 0){
 			if(topLeft || topRight) {
+				
 				dy = 0;
-				ytemp = currRow * tileSize + cheight / 2;
+				if(x <= cwidth / 2){
+					//ytemp = cheight / 2;
+					ytemp = (currRow + 1) * tileSize;
+					System.out.println("hi");
+				}else{
+					ytemp = currRow * tileSize + cheight / 2;
+				}
+				
 			}else{
 				ytemp += dy;
 			}
@@ -144,7 +168,12 @@ public abstract class MapObject {
 		if(dx < 0){
 			if(topLeft || bottomLeft){
 				dx = 0;
-				xtemp = currCol * tileSize + cwidth / 2;
+				if(x <= cwidth / 2){
+					xtemp = cwidth / 2;
+				}else{
+					xtemp = currCol * tileSize + cwidth / 2;
+				}
+				
 			}else{
 				xtemp += dx;
 			}
@@ -153,7 +182,13 @@ public abstract class MapObject {
 		if(dx > 0){
 			if(topRight || bottomRight){
 				dx = 0;
-				xtemp = (currCol + 1) * tileSize - cwidth / 2;
+				System.out.println(x);
+				if(x >= tileMap.getWidth()){
+					xtemp = (currCol + 1) * tileSize - cwidth / 2;
+				}else{
+					xtemp = (currCol + 1) * tileSize - cwidth / 2;
+
+				}
 			}else{
 				xtemp += dx;
 			}
