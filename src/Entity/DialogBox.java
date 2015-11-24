@@ -12,11 +12,14 @@ public class DialogBox{
 	
 	private BufferedImage image;
 	private Font font;
-	private String toPrint;
+	private char[] toPrint;
+	private String myString = "";
+	private int i = -1;
+	public boolean finished = false;
 	
 	public DialogBox(String s){
 		
-		toPrint = s;
+		toPrint = s.toCharArray();
 		try{
 			
 			image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/avatar.png"));
@@ -28,6 +31,11 @@ public class DialogBox{
 		
 	}
 	
+	public synchronized void setFinished(){
+		finished = true;
+		notifyAll();
+	}
+	
 	public void draw(Graphics2D g){
 		
 		g.setColor(Color.BLACK);
@@ -37,7 +45,22 @@ public class DialogBox{
 		g.drawImage(image, 20, GamePanel.HEIGHT - 65, null);
 		g.setFont(font);
 		g.setColor(Color.WHITE);
-		g.drawString(toPrint, 75, GamePanel.HEIGHT - 35);
+		g.drawString(myString, 75, GamePanel.HEIGHT - 35);
+		if(i >= toPrint.length - 1){
+			i = toPrint.length - 1;
+			setFinished();
+		}else{
+			i++;
+			myString += Character.toString(toPrint[i]);
+		}
+		
+		
+		try {
+			Thread.sleep(70);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		//g.drawString(player.getAmmo() + "/" + player.getMaxAmmo(), 30, 45);
 		
 	}

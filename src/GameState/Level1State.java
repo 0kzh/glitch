@@ -19,6 +19,8 @@ public class Level1State extends GameState{
 	private FillScreen fs;
 	private DialogBox dbox;
 	private Player player;
+	public boolean talking;
+	public boolean z_pressed;
 	
 	private ArrayList<Enemy> enemies;
 	private ArrayList<Explosion> explosions; 
@@ -52,10 +54,21 @@ public class Level1State extends GameState{
 		JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
 	}
 	
-	private void playCutscene() {
+	private synchronized void playCutscene() {
 		fs = new FillScreen(Color.BLACK);
+		DialogBox[] dialog = {new DialogBox("Where... Where am I?"), new DialogBox("..."), new DialogBox("...")}; 
 		
-		dbox = new DialogBox("Where... Where am I?");
+		talking = true;
+		for(int i = 0; i < dialog.length; i++){
+			dbox = dialog[i];
+			try {
+				dbox.wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 	}
 
 	private void populateEnemies(){
@@ -140,7 +153,7 @@ public class Level1State extends GameState{
 		
 		fs.draw(g);
 		
-		dbox.draw(g);
+		if(talking) dbox.draw(g);
 	}
 	
 	public void handleInput() {
