@@ -90,6 +90,14 @@ public class Bullet extends MapObject {
 	
 	public void update(){
 		
+		if(x >= tileMap.getWidth()){
+			setHit();
+		}
+		
+		if(x <= 0){
+			setHit();
+		}
+		
 		checkTileMapCollision();
 		setPosition(xtemp, ytemp);
 		

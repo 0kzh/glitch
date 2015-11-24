@@ -260,11 +260,18 @@ public class Player extends MapObject{
 	}
 	
 	public void update() {
-		timeElapsed = (System.nanoTime() - fireDelay) / 1000000;
 		
-		if(x >= tileMap.getWidth()){
-			
+		
+		if(x >= tileMap.getWidth() - tileSize/2){
+			x = tileMap.getWidth()- tileSize/2;
+			topRight = true;
 		}
+		
+		if(x <= tileSize / 2){
+			x = tileSize / 2;
+			bottomLeft = true;
+		}
+		
 		// update position
 		getNextPosition();
 		checkTileMapCollision();

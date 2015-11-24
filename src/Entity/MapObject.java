@@ -109,23 +109,12 @@ public abstract class MapObject {
 		bottomRight = br == Tile.BLOCKED;
 		
 		
-		if(x >= tileMap.getWidth()){
-			x = tileMap.getWidth();
-			bottomRight = true;
-			System.out.println("asdf");
-		}
-		
-		if(x <= cwidth / 2){
-			x = 0;
-			bottomLeft = true;
-		}
-		
-		
 		
 		
 	}
 	
 	public void checkTileMapCollision() {
+		
 		
 		currCol = (int) x / tileSize;
 		currRow = (int) y / tileSize;
@@ -136,18 +125,14 @@ public abstract class MapObject {
 		xtemp = x;
 		ytemp = y;
 		
+		
+		
 		calculateCorners(x, ydest);
 		if(dy < 0){
 			if(topLeft || topRight) {
-				
+
 				dy = 0;
-				if(x <= cwidth / 2){
-					//ytemp = cheight / 2;
-					ytemp = (currRow + 1) * tileSize;
-					System.out.println("hi");
-				}else{
-					ytemp = currRow * tileSize + cheight / 2;
-				}
+				ytemp = currRow * tileSize + cheight / 2;
 				
 			}else{
 				ytemp += dy;
@@ -168,11 +153,7 @@ public abstract class MapObject {
 		if(dx < 0){
 			if(topLeft || bottomLeft){
 				dx = 0;
-				if(x <= cwidth / 2){
-					xtemp = cwidth / 2;
-				}else{
-					xtemp = currCol * tileSize + cwidth / 2;
-				}
+				xtemp = currCol * tileSize + cwidth / 2;
 				
 			}else{
 				xtemp += dx;
@@ -182,13 +163,8 @@ public abstract class MapObject {
 		if(dx > 0){
 			if(topRight || bottomRight){
 				dx = 0;
-				System.out.println(x);
-				if(x >= tileMap.getWidth()){
-					xtemp = (currCol + 1) * tileSize - cwidth / 2;
-				}else{
-					xtemp = (currCol + 1) * tileSize - cwidth / 2;
-
-				}
+				xtemp = (currCol + 1) * tileSize - cwidth / 2;
+				
 			}else{
 				xtemp += dx;
 			}
