@@ -16,6 +16,8 @@ public class Level1State extends GameState{
 	private TileMap tileMap;
 	private Background bg;
 	private HUD hud;
+	private FillScreen fs;
+	private DialogBox dbox;
 	private Player player;
 	
 	private ArrayList<Enemy> enemies;
@@ -40,7 +42,7 @@ public class Level1State extends GameState{
 		player.setPosition(100, 100);
 		
 		populateEnemies();
-		
+		playCutscene();
 		
 		explosions = new ArrayList<Explosion>();
 		
@@ -50,6 +52,12 @@ public class Level1State extends GameState{
 		JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
 	}
 	
+	private void playCutscene() {
+		fs = new FillScreen(Color.BLACK);
+		
+		dbox = new DialogBox("Where... Where am I?");
+	}
+
 	private void populateEnemies(){
 		enemies = new ArrayList<Enemy>();
 		
@@ -130,6 +138,9 @@ public class Level1State extends GameState{
 		//draw hud
 		hud.draw(g);
 		
+		fs.draw(g);
+		
+		dbox.draw(g);
 	}
 	
 	public void handleInput() {
