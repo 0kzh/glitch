@@ -19,11 +19,13 @@ public class Level1State extends GameState{
 	private FillScreen fs;
 	private DialogBox dbox;
 	private Player player;
-	public boolean talking;
-	public boolean z_pressed;
 	
 	private ArrayList<Enemy> enemies;
 	private ArrayList<Explosion> explosions; 
+	private DialogBox[] dialog = {new DialogBox("Where... Where am I?"), new DialogBox("..."), new DialogBox("...")}; 
+	private int index;
+	private int index2 = 0;
+	private boolean keyPressed;
 	
 	public Level1State(GameStateManager gsm){
 		super(gsm);
@@ -44,29 +46,24 @@ public class Level1State extends GameState{
 		player.setPosition(100, 100);
 		
 		populateEnemies();
-		playCutscene();
 		
 		explosions = new ArrayList<Explosion>();
 		
 		hud = new HUD(player);
 		
+		
 		JukeBox.load("/Music/level1-1.mp3", "level1");
 		JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
+		
 	}
 	
-	private synchronized void playCutscene() {
-		fs = new FillScreen(Color.BLACK);
-		DialogBox[] dialog = {new DialogBox("Where... Where am I?"), new DialogBox("..."), new DialogBox("...")}; 
-		
-		talking = true;
-		for(int i = 0; i < dialog.length; i++){
-			dbox = dialog[i];
-			try {
-				dbox.wait();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+	private void printDialogue() {
+		if(index < dialog.length){
+			fs = new FillScreen(Color.BLACK);
+			dbox = dialog[index];
+			JukeBox.stop("level1");
+		}else{
+			fs.setRemove(true);
 		}
 		
 	}
@@ -89,8 +86,9 @@ public class Level1State extends GameState{
 	}
 
 	public void update() {
-		
 		// check keys
+		
+		printDialogue();
 		handleInput();
 		
 		player.update();
@@ -121,6 +119,8 @@ public class Level1State extends GameState{
 				i--;
 			}
 		}
+		
+		
 	}
 
 	
@@ -150,10 +150,34 @@ public class Level1State extends GameState{
 		
 		//draw hud
 		hud.draw(g);
-		
-		fs.draw(g);
-		
-		if(talking) dbox.draw(g);
+		try{
+			if(!fs.shouldRemove()){
+				fs.draw(g);
+			}else{
+				if(index2 < 30){
+					g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT / 2 - (index2 * GamePanel.HEIGHT / 60));
+					g.fillRect(0, GamePanel.HEIGHT / 2 + (index2 * GamePanel.HEIGHT / 60), GamePanel.WIDTH, GamePanel.HEIGHT / 2);
+					Thread.sleep(10);
+					index2++;
+				}else{
+					JukeBox.resume("level1", true);
+				}
+			}
+			
+			if(!dbox.shouldRemove()){
+				dbox.draw(g);
+				if(Keys.isPressed(Keys.BUTTON1) && !keyPressed && dbox.isDone()){
+					dbox.setRemove(true);
+					keyPressed = true;
+				}else if(!Keys.isPressed(Keys.BUTTON1)){
+					keyPressed = false;
+				}
+			}
+			else if(index < dialog.length){
+				index++;
+			}
+		}catch(Exception e){
+		}
 	}
 	
 	public void handleInput() {

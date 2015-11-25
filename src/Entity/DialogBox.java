@@ -5,7 +5,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
-
 import Main.GamePanel;
 
 public class DialogBox{
@@ -15,11 +14,13 @@ public class DialogBox{
 	private char[] toPrint;
 	private String myString = "";
 	private int i = -1;
-	public boolean finished = false;
+	public boolean remove;
+	private boolean done = false;
 	
 	public DialogBox(String s){
 		
 		toPrint = s.toCharArray();
+		remove = false;
 		try{
 			
 			image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/avatar.png"));
@@ -31,10 +32,11 @@ public class DialogBox{
 		
 	}
 	
-	public synchronized void setFinished(){
-		finished = true;
-		notifyAll();
-	}
+	public boolean shouldRemove() { return remove; }
+	
+	public boolean isDone() { return done; }
+	
+	public void setRemove(boolean b) { remove = b; }
 	
 	public void draw(Graphics2D g){
 		
@@ -48,7 +50,7 @@ public class DialogBox{
 		g.drawString(myString, 75, GamePanel.HEIGHT - 35);
 		if(i >= toPrint.length - 1){
 			i = toPrint.length - 1;
-			setFinished();
+			done = true;
 		}else{
 			i++;
 			myString += Character.toString(toPrint[i]);

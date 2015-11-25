@@ -50,6 +50,10 @@ public class JukeBox {
 		play(s, gap);
 	}
 	
+	public static void mute(boolean b){
+		mute = b;
+	}
+	
 	public static void play(String s, int i) {
 		if(mute) return;
 		Clip c = clips.get(s);
@@ -64,10 +68,13 @@ public class JukeBox {
 		if(clips.get(s).isRunning()) clips.get(s).stop();
 	}
 	
-	public static void resume(String s) {
+	public static void resume(String s, boolean b) {
 		if(mute) return;
 		if(clips.get(s).isRunning()) return;
 		clips.get(s).start();
+		if(b){
+			loop(s, 600, clips.get(s).getFrameLength() -  2200);
+		}
 	}
 	
 	public static void loop(String s) {
