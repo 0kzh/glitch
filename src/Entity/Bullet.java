@@ -12,6 +12,7 @@ public class Bullet extends MapObject {
 	private BufferedImage[] sprites;
 	private BufferedImage[] iSprites;
 	private BufferedImage[] hitSprites;
+	private long time;
 
 	public Bullet(TileMap tm, boolean right, boolean up, boolean down){
 		
@@ -20,6 +21,8 @@ public class Bullet extends MapObject {
 		facingRight = right;
 		facingUp = up;
 		facingDown = down;
+		
+		time = System.nanoTime();
 		
 		moveSpeed = 6;
 		
@@ -89,6 +92,10 @@ public class Bullet extends MapObject {
 	public boolean shouldRemove() { return remove; }
 	
 	public void update(){
+		
+		if((System.nanoTime() - time) / 1000000 > 400){
+			remove = true;
+		}
 		
 		if(x >= tileMap.getWidth()){
 			setHit();
