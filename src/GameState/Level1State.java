@@ -18,7 +18,7 @@ public class Level1State extends GameState{
 	private HUD hud;
 	private FillScreen fs;
 	private DialogBox dbox;
-	private Player player;
+	private TextPlayer player;
 	
 	private ArrayList<Enemy> enemies;
 	private ArrayList<Explosion> explosions; 
@@ -34,22 +34,22 @@ public class Level1State extends GameState{
 	
 	public void init() {
 		//initialize tile map
-		tileMap = new TileMap(24);
-		tileMap.loadTiles("/Tilesets/cavetileset.png");
+		tileMap = new TileMap(16);
+		tileMap.loadTiles("/Tilesets/texttileset.png");
 		tileMap.loadMap("/Maps/level1-1.map");
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
 		
 		bg = new Background("/Backgrounds/level1bg.gif", 0.1);
 		
-		player = new Player(tileMap);
-		player.setPosition(80, 567);
+		player = new TextPlayer(tileMap);
+		player.setPosition(51, 380);
 		
 		populateEnemies();
 		
 		explosions = new ArrayList<Explosion>();
 		
-		hud = new HUD(player);
+		//hud = new HUD(player);
 		
 		
 		JukeBox.load("/Music/level1-1.mp3", "level1");
@@ -98,7 +98,7 @@ public class Level1State extends GameState{
 		bg.setPosition(tileMap.getx(), tileMap.gety());
 		
 		// attack enemies
-		player.checkAttack(enemies);
+		//player.checkAttack(enemies);
 		
 		//update enemies
 		for(int i = 0; i < enemies.size(); i++) {
@@ -149,7 +149,7 @@ public class Level1State extends GameState{
 		
 		
 		//draw hud
-		hud.draw(g);
+		//hud.draw(g);
 		try{
 			if(!fs.shouldRemove()){
 				fs.draw(g);
@@ -188,7 +188,6 @@ public class Level1State extends GameState{
 		player.setDown(Keys.keyState[Keys.DOWN]);
 		player.setRight(Keys.keyState[Keys.RIGHT]);
 		player.setJumping(Keys.keyState[Keys.BUTTON1]);
-		if(Keys.isPressed(Keys.BUTTON2)) player.setFiring();
 	}
 
 	
