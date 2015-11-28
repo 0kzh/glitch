@@ -23,7 +23,7 @@ public class DialogBox{
 		remove = false;
 		try{
 			
-			image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/avatar.png"));
+			image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/textavatar.png"));
 			font = new Font("Arial", Font.PLAIN, 11);
 			
 		}catch(Exception e){

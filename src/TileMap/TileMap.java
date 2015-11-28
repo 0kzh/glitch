@@ -59,9 +59,26 @@ public class TileMap {
 			BufferedImage subimage;
 			for(int col = 0; col < numTilesAcross; col++){
 				subimage = tileset.getSubimage(col * tileSize, 0, tileSize, tileSize);
-				tiles[0][col] = new Tile(subimage, Tile.NORMAL);
+				if(s.equals("/Tilesets/texttileset.png")){
+					if(col == 4){
+						tiles[0][col] = new Tile(subimage, Tile.TERMINAL);
+					}else{
+						tiles[0][col] = new Tile(subimage, Tile.NORMAL);
+					}
+				}else{
+					tiles[0][col] = new Tile(subimage, Tile.NORMAL);
+				}
 				subimage = tileset.getSubimage(col * tileSize, tileSize, tileSize, tileSize);
-				tiles[1][col] = new Tile(subimage, Tile.BLOCKED);
+				if(s.equals("/Tilesets/texttileset.png")){
+					if(col == 3){
+						tiles[1][col] = new Tile(subimage, Tile.DAMAGING);
+					}else{
+						tiles[1][col] = new Tile(subimage, Tile.BLOCKED);
+					}
+				}else{
+					tiles[1][col] = new Tile(subimage, Tile.BLOCKED);
+				}
+				
 			}
 			
 		}catch(Exception e){

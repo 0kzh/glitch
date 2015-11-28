@@ -22,6 +22,8 @@ public abstract class MapObject {
 	protected double dx;
 	protected double dy;
 	
+	int tl, tr, br, bl;
+	
 	// dimensions
 	protected int width;
 	protected int height;
@@ -98,15 +100,15 @@ public abstract class MapObject {
                 return;
         }
 		
-		int tl = tileMap.getType(topTile, leftTile);
-		int tr = tileMap.getType(topTile, rightTile);
-		int bl = tileMap.getType(bottomTile, leftTile);
-		int br = tileMap.getType(bottomTile, rightTile);
+		tl = tileMap.getType(topTile, leftTile);
+		tr = tileMap.getType(topTile, rightTile);
+		bl = tileMap.getType(bottomTile, leftTile);
+		br = tileMap.getType(bottomTile, rightTile);
 		
-		topLeft = tl == Tile.BLOCKED;
-		topRight = tr == Tile.BLOCKED;
-		bottomLeft = bl == Tile.BLOCKED;
-		bottomRight = br == Tile.BLOCKED;
+		topLeft = tl == Tile.BLOCKED || tl == Tile.DAMAGING;
+		topRight = tr == Tile.BLOCKED || tr == Tile.DAMAGING;
+		bottomLeft = bl == Tile.BLOCKED || bl == Tile.DAMAGING;
+		bottomRight = br == Tile.BLOCKED || br == Tile.DAMAGING;
 		
 		
 		

@@ -16,6 +16,8 @@ public class TextPlayer extends MapObject{
 	private int health;
 	private int maxHealth;
 	private boolean dead;
+	private int spawnX;
+	private int spawnY;
 	
 	// animations
 	private ArrayList<BufferedImage[]> sprites;
@@ -84,6 +86,12 @@ public class TextPlayer extends MapObject{
 	public int getHealth() { return health; }
 	public int getMaxHealth() { return maxHealth; }
 	
+	public void setSpawnPoint(int i, int j){
+		spawnX = i;
+		spawnY = j;
+		
+	}
+	
 	public void setJumping(boolean b) {
 		jumping = b;
 	}
@@ -135,6 +143,16 @@ public class TextPlayer extends MapObject{
 	
 	public void update() {
 		
+		if(tl == Tile.DAMAGING || tr == Tile.DAMAGING || bl == Tile.DAMAGING || br == Tile.DAMAGING){
+			health = 0;
+		}
+		
+		if(tl == Tile.TERMINAL || tr == Tile.TERMINAL){
+			if(Keys.isPressed(Keys.BUTTON1)){
+				//if z is pressed, show console
+				
+			}
+		}
 		
 		if(x >= tileMap.getWidth() - tileSize/2){
 			x = tileMap.getWidth()- tileSize/2;
@@ -150,7 +168,17 @@ public class TextPlayer extends MapObject{
 		getNextPosition();
 		checkTileMapCollision();
 		setPosition(xtemp, ytemp);
-		if(dy > 0){
+		if(health <= 0){
+			if(currentAction != DEAD){
+				currentAction = DEAD;
+				animation.setFrames(sprites.get(DEAD));
+				animation.setDelay(100);
+				width = 16;
+			}
+			if(animation.hasPlayedOnce()){
+				respawn();
+			}
+		}else if(dy > 0){
 			if(currentAction != FALLING){
 				currentAction = FALLING;
 				animation.setFrames(sprites.get(FALLING));
@@ -186,6 +214,11 @@ public class TextPlayer extends MapObject{
 		if(left) facingRight = false;
 	}
 	
+	private void respawn() {
+		setPosition(spawnX, spawnY);
+		health = 5;
+	}
+
 	public void draw(Graphics2D g){
 		
 		setMapPosition();
