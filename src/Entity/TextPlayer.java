@@ -39,8 +39,8 @@ public class TextPlayer extends MapObject{
 		
 		width = 16;
 		height = 16;
-		cwidth = 16;
-		cheight = 16;
+		cwidth = 12;
+		cheight = 14;
 		
 		moveSpeed = 0.3;
 		maxSpeed = 2.0;
@@ -80,6 +80,7 @@ public class TextPlayer extends MapObject{
 		animation.setDelay(400);
 		
 		JukeBox.load("/SFX/jump.mp3", "jump");
+		JukeBox.load("/SFX/dead.mp3", "dead");
 		
 	}
 	
@@ -94,6 +95,17 @@ public class TextPlayer extends MapObject{
 	
 	public void setJumping(boolean b) {
 		jumping = b;
+	}
+	
+	public void checkAttack(ArrayList<Enemy> enemies){
+		for(int i = 0; i < enemies.size(); i++){
+			Enemy e = enemies.get(i);
+			if(intersects(e)){
+				health = 0;	
+			}
+		}
+		
+		
 	}
 	
 	private void getNextPosition() {
@@ -143,13 +155,14 @@ public class TextPlayer extends MapObject{
 	
 	public void update() {
 		
-		if(tl == Tile.DAMAGING || tr == Tile.DAMAGING || bl == Tile.DAMAGING || br == Tile.DAMAGING){
-			health = 0;
+		if(bl == Tile.DAMAGING || br == Tile.DAMAGING){
+			health = 0;	
 		}
 		
 		if(tl == Tile.TERMINAL || tr == Tile.TERMINAL){
 			if(Keys.isPressed(Keys.BUTTON1)){
 				//if z is pressed, show console
+				
 				
 			}
 		}
@@ -174,9 +187,13 @@ public class TextPlayer extends MapObject{
 				animation.setFrames(sprites.get(DEAD));
 				animation.setDelay(100);
 				width = 16;
+				JukeBox.play("dead");
 			}
 			if(animation.hasPlayedOnce()){
 				respawn();
+			}else{
+				dx = 0;
+				dy = 0;
 			}
 		}else if(dy > 0){
 			if(currentAction != FALLING){

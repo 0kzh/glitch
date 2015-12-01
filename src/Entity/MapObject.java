@@ -22,7 +22,10 @@ public abstract class MapObject {
 	protected double dx;
 	protected double dy;
 	
-	int tl, tr, br, bl;
+	public int tl;
+	public int tr;
+	public int br;
+	public int bl;
 	
 	// dimensions
 	protected int width;

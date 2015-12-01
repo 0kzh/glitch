@@ -13,7 +13,7 @@ import Main.GamePanel;
 import TileMap.*;
 import Audio.JukeBox;
 
-public class Level1State extends GameState{
+public class Level2State extends GameState{
 
 	private TileMap tileMap;
 	private Background bg;
@@ -23,16 +23,14 @@ public class Level1State extends GameState{
 	private DialogBox dbox1;
 	private TextPlayer player;
 	
-	
-	//private ArrayList<Enemy> enemies;
+	private ArrayList<Enemy> enemies;
 	//private ArrayList<Explosion> explosions; 
 	private DialogBox[] dialog = {new DialogBox("...", 1), new DialogBox("Where am I?", 1), new DialogBox("Welcome to the Matrix.", 2), new DialogBox("... What?", 1), new DialogBox("It is where deleted objects go.", 2)}; 
 	private int index;
 	private int index2 = 0;
 	private boolean keyPressed;
-	private boolean talking;
 	
-	public Level1State(GameStateManager gsm){
+	public Level2State(GameStateManager gsm){
 		super(gsm);
 		init();
 	}
@@ -41,23 +39,39 @@ public class Level1State extends GameState{
 		//initialize tile map
 		tileMap = new TileMap(16);
 		tileMap.loadTiles("/Tilesets/texttileset.png");
-		tileMap.loadMap("/Maps/level1-1.map");
+		tileMap.loadMap("/Maps/level1-2.map");
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
 		
 		bg = new Background("/Backgrounds/level1bg.png", 0.1);
-		
+		populateEnemies();
 		player = new TextPlayer(tileMap);
-		//player.setSpawnPoint(489, 55);
-		//player.setPosition(489, 55);
-		player.setSpawnPoint(51, 380);
-		player.setPosition(51, 380);
+		player.setSpawnPoint(19, 365);
+		player.setPosition(19, 365);
+		//player.setSpawnPoint(51, 380);
+		//player.setPosition(51, 380);
 		//hud = new HUD(player);
 		
 		
-		JukeBox.load("/Music/level1-1.mp3", "level1");
-		JukeBox.load("/SFX/press.mp3", "press");
-		JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
+		//JukeBox.load("/Music/level1-1.mp3", "level1");
+		//JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
+		
+	}
+	
+	private void populateEnemies() {
+		
+		enemies = new ArrayList<Enemy>();
+		
+		Slugger s;
+		Point[] points = new Point[] {
+			new Point(163, 402),
+			new Point(177, 131)
+		};
+		for(int i = 0; i < points.length; i++) {
+			s = new Slugger(tileMap);
+			s.setPosition(points[i].x, points[i].y);
+			enemies.add(s);
+		}
 		
 	}
 	
@@ -66,10 +80,8 @@ public class Level1State extends GameState{
 			fs = new FillScreen(Color.BLACK);
 			dbox = dialog[index];
 			JukeBox.stop("level1");
-			talking = true;
 		}else{
 			fs.setRemove(true);
-			talking = false;
 		}
 		
 	}
@@ -77,35 +89,40 @@ public class Level1State extends GameState{
 	public void update() {
 		// check keys
 		
-		printDialogue();
-		if(!talking){
-			if(console == null){
-				handleInput();
-				player.update();
-			}
-			if(Keys.isPressed(Keys.BUTTON1)){
-				if(player.tl == Tile.TERMINAL || player.tr == Tile.TERMINAL || player.bl == Tile.TERMINAL || player.br == Tile.TERMINAL){
-					if(console == null){
-						console = new Console(1);
-					}else{
-						if(dbox1 == null){
-							dbox1 = new DialogBox("Am I inside of a game?", 1);
-						}
-						if(dbox1.isDone()){
-							dbox1.setRemove(true);
-							gsm.setState(GameStateManager.LEVEL2STATE);
-						}
+		//printDialogue();
+		
+		if(console == null){
+			handleInput();
+			player.update();
+		}
+		
+		if(Keys.isPressed(Keys.BUTTON1)){
+			if(player.tl == Tile.TERMINAL || player.tr == Tile.TERMINAL || player.bl == Tile.TERMINAL || player.br == Tile.TERMINAL){
+				if(console == null){
+					console = new Console(2);
+				}else{
+					if(dbox1 == null){
+						dbox1 = new DialogBox("", 1);
+					}
+					if(dbox1.isDone()){
+						gsm.setState(GameStateManager.LEVEL2STATE);
 					}
 				}
 			}
-			tileMap.setPosition(GamePanel.WIDTH / 2 - player.getx(), GamePanel.HEIGHT / 2 - player.gety());
-			
-			
-			bg.setPosition(tileMap.getx(), tileMap.gety());
-			
-			// attack enemies
-			//player.checkAttack(enemies);
 		}
+		tileMap.setPosition(GamePanel.WIDTH / 2 - player.getx(), GamePanel.HEIGHT / 2 - player.gety());
+		
+		
+		bg.setPosition(tileMap.getx(), tileMap.gety());
+		
+		for(int i = 0; i < enemies.size(); i++) {
+			Enemy e = enemies.get(i);
+			e.update();
+		}
+		
+		// attack enemies
+		player.checkAttack(enemies);
+		
 		
 		
 	}
@@ -122,16 +139,15 @@ public class Level1State extends GameState{
 		//draw player
 		player.draw(g);
 		
+		for(int i = 0; i < enemies.size(); i++) {
+			enemies.get(i).draw(g);
+		}
+		
 		if(console != null) console.draw(g);
 		//draw hud
 		//hud.draw(g);
-		
-		if(dbox1 != null && !dbox1.shouldRemove()){
-			dbox1.draw(g);
-		}
-		
 		try{
-			if(!fs.shouldRemove()){
+			if(!fs.shouldRemove() && fs != null){
 				fs.draw(g);
 			}else{
 				if(index2 < 30){
@@ -144,7 +160,7 @@ public class Level1State extends GameState{
 				}
 			}
 			
-			if(!dbox.shouldRemove()){
+			if(!dbox.shouldRemove() && dbox != null){
 				dbox.draw(g);
 				if(Keys.isPressed(Keys.BUTTON1) && !keyPressed && dbox.isDone()){
 					dbox.setRemove(true);

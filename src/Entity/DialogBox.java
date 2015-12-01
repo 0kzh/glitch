@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import Main.GamePanel;
+import Audio.JukeBox;
 
 public class DialogBox{
 	
@@ -17,13 +18,25 @@ public class DialogBox{
 	public boolean remove;
 	private boolean done = false;
 	
-	public DialogBox(String s){
+	
+	public static final int PLAYER = 0;
+	public static final int TEXT_PLAYER = 1;
+	public static final int CONSOLE = 2;
+	
+	public DialogBox(String s, int character){
 		
 		toPrint = s.toCharArray();
 		remove = false;
 		try{
 			
-			image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/textavatar.png"));
+			if(character == 0){
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/avatar.png"));
+			}else if(character == 1){
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/textavatar.png"));
+			}else if(character == 2){
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar.png"));
+			}
+			
 			font = new Font("Arial", Font.PLAIN, 11);
 			
 		}catch(Exception e){
@@ -36,7 +49,7 @@ public class DialogBox{
 	
 	public boolean isDone() { return done; }
 	
-	public void setRemove(boolean b) { remove = b; }
+	public void setRemove(boolean b) { JukeBox.play("press"); remove = b; }
 	
 	public void draw(Graphics2D g){
 		
@@ -58,7 +71,7 @@ public class DialogBox{
 		
 		
 		try {
-			Thread.sleep(70);
+			Thread.sleep(55);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

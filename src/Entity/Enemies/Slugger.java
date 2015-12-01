@@ -21,10 +21,10 @@ public class Slugger extends Enemy{
 		fallSpeed = 0.2;
 		maxFallSpeed = 10;
 		
-		width = 30;
-		height = 30;
-		cwidth = 20;
-		cheight = 20;
+		width = 16;
+		height = 16;
+		cwidth = 13;
+		cheight = 13;
 		
 		health = maxHealth = 2;
 		damage = 1;
@@ -32,7 +32,7 @@ public class Slugger extends Enemy{
 		// load sprites
 		try{
 			
-			BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream("/Sprites/Enemies/slugger.gif"));
+			BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream("/Sprites/Enemies/slime.png"));
 			
 			sprites = new BufferedImage[3];
 			for(int i = 0; i < sprites.length; i++){
