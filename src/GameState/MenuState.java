@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-
+import Audio.JukeBox;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
@@ -21,8 +21,9 @@ public class MenuState extends GameState {
 	private String[] options = {"Start", "Options", "Quit"};
 	private String copyright = "2015 Kelvin Zhang";
 	private String version = "Version 1.0";
+	private boolean buttonPressed = false;
 	BufferedImage logo;
-	File f = new File("pointer.gif");
+	File f = new File("pointer.png");
 	Image icon;
 	
 	private Font font;
@@ -40,6 +41,8 @@ public class MenuState extends GameState {
 			font = new Font("Arial", Font.PLAIN, 12);
 			logo = ImageIO.read(new File("Resources/Backgrounds/logo.png"));
 			icon = new ImageIcon(f.toURI().toURL()).getImage();
+			JukeBox.load("/SFX/option.mp3", "option");
+			JukeBox.load("/SFX/select.wav", "select");
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -48,7 +51,7 @@ public class MenuState extends GameState {
 	}
 	
 	public void init() {
-
+		
 	}
 
 	public void update() {
@@ -64,7 +67,7 @@ public class MenuState extends GameState {
 		g.setFont(font);
 		for (int i = 0; i < options.length; i++) {
 			if( i == currentChoice){
-				g.setColor(Color.LIGHT_GRAY);
+				g.setColor(Color.GREEN);
 			}else{
 				g.setColor(Color.WHITE);
 			}
@@ -87,6 +90,7 @@ public class MenuState extends GameState {
 	private void select(){
 		if(currentChoice == 0){
 			//start
+			
 			gsm.setState(GameStateManager.LEVEL1STATE);
 		}
 		
@@ -103,29 +107,32 @@ public class MenuState extends GameState {
 	public void handleInput() {
 		
 		if(Keys.isPressed(Keys.ENTER)){
+			JukeBox.play("select");
 			select();
 		}
-		if(Keys.isPressed(Keys.UP)){
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			currentChoice--;
-			if(currentChoice == -1){
-				currentChoice = options.length - 1;
+		else if(Keys.isPressed(Keys.UP)){
+			
+			if(!buttonPressed){
+				currentChoice--;
+				if(currentChoice == -1){
+					currentChoice = options.length - 1;
+				}
+				buttonPressed = true;
+				JukeBox.play("option");
 			}
 		}
-		if(Keys.isPressed(Keys.DOWN)){
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+		else if(Keys.isPressed(Keys.DOWN)){
+			
+			if(!buttonPressed){
+				currentChoice++;
+				if(currentChoice == options.length){
+					currentChoice = 0;
+				}
+				buttonPressed = true;
+				JukeBox.play("option");
 			}
-			currentChoice++;
-			if(currentChoice == options.length){
-				currentChoice = 0;
-			}
+		}else{
+			buttonPressed = false;
 		}
 		
 	}

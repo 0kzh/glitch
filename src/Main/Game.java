@@ -6,7 +6,7 @@ public class Game {
 
 	public static void main(String[] args){
 		
-		JFrame window = new JFrame("Skyward");
+		JFrame window = new JFrame("GLITCH");
 		window.setSize(640, 480);
 		window.setLocationRelativeTo(null);
 		window.setContentPane(new GamePanel());

@@ -44,17 +44,17 @@ public class Console{
 		g.setFont(font);
 		g.setColor(Color.WHITE);
 		if(stage == 1){
-			g.drawString("view patchnotes", 175, 77);
+			g.drawString("view patchnotes", 182, 77);
 			g.drawString("Version 1.0:", 35, 88);
 			g.drawString("- Added enemies", 35, 99);
 			g.drawString("- Fixed spaghetti code", 35, 110);
-			g.drawString("- Removed a glitch", 35, 121);
+			g.drawString("- Sent a glitch to the matrix", 35, 121);
 		}else if(stage == 2){
-			g.drawString("view patchnotes", 175, 77);
+			g.drawString("view patchnotes", 182, 77);
 			g.drawString("Version 1.1:", 35, 88);
 			g.drawString("- Added background music", 35, 99);
 			g.drawString("- Fixed some bugs", 35, 110);
-			g.drawString("- ayy lmao", 35, 121);
+			g.drawString("- Removed herobrine", 35, 121);
 		}
 		//g.drawString(player.getHealth() + "/" + player.getMaxHealth(), 30, 25);
 		//g.drawString(player.getAmmo() + "/" + player.getMaxAmmo(), 30, 45);

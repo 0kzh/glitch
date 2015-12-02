@@ -39,7 +39,7 @@ public class TextPlayer extends MapObject{
 		
 		width = 16;
 		height = 16;
-		cwidth = 12;
+		cwidth = 10;
 		cheight = 14;
 		
 		moveSpeed = 0.3;
@@ -155,7 +155,13 @@ public class TextPlayer extends MapObject{
 	
 	public void update() {
 		
-		if(bl == Tile.DAMAGING || br == Tile.DAMAGING){
+		if((int)(x / tileSize) > 0 && (int)(y / tileSize) > 0){
+			if(tileMap.getType((int) y / tileSize, (int) (x) / tileSize) == Tile.DAMAGING){
+				health = 0;
+			}
+		}
+		
+		if(bl == Tile.DAMAGING || br == Tile.DAMAGING || tl == Tile.DAMAGING || tr == Tile.DAMAGING){
 			health = 0;	
 		}
 		

@@ -26,7 +26,7 @@ public class Level1State extends GameState{
 	
 	//private ArrayList<Enemy> enemies;
 	//private ArrayList<Explosion> explosions; 
-	private DialogBox[] dialog = {new DialogBox("...", 1), new DialogBox("Where am I?", 1), new DialogBox("Welcome to the Matrix.", 2), new DialogBox("... What?", 1), new DialogBox("It is where deleted objects go.", 2)}; 
+	private DialogBox[] dialog = {new DialogBox("...", 1), new DialogBox("Where am I?", 1), new DialogBox("GREETINGS. I SEE YOU HAVE AWOKEN.", 2), new DialogBox("THIS IS THE MATRIX, WHERE NO ONE LEAVES", 2), new DialogBox("GOOD LUCK ESCAPING, NOONE EVER HAS!", 2), new DialogBox("hahaha!!", 2), new DialogBox("HAHahA!!", 2), new DialogBox("HAHAHA!!11!!1", 2)}; 
 	private int index;
 	private int index2 = 0;
 	private boolean keyPressed;
@@ -89,7 +89,7 @@ public class Level1State extends GameState{
 						console = new Console(1);
 					}else{
 						if(dbox1 == null){
-							dbox1 = new DialogBox("Am I inside of a game?", 1);
+							dbox1 = new DialogBox("I'm... a glitch?", 1);
 						}
 						if(dbox1.isDone()){
 							dbox1.setRemove(true);
