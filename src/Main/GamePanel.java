@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import Handlers.Keys;
 
 import GameState.GameStateManager;
+import GameState.OptionsState;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener{
 
@@ -51,6 +52,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 
 	public void keyPressed(KeyEvent key) {
 		Keys.keySet(key.getKeyCode(), true);
+		if(OptionsState.reading){
+			OptionsState.keyPress = key.getKeyCode();
+			OptionsState.reading = false;
+			OptionsState.select();
+		}
 	}
 
 	public void keyReleased(KeyEvent key) {

@@ -1,6 +1,7 @@
 package GameState;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import GameState.GameStateManager;
@@ -33,6 +34,11 @@ public class Level2State extends GameState{
 	public Level2State(GameStateManager gsm){
 		super(gsm);
 		init();
+		try {
+			gsm.save();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void init() {
@@ -55,6 +61,9 @@ public class Level2State extends GameState{
 		
 		//JukeBox.load("/Music/level1-1.mp3", "level1");
 		//JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
+		if(!JukeBox.isPlaying("level1")){
+			JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
+		}
 		
 	}
 	

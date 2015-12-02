@@ -1,6 +1,7 @@
 package GameState;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import GameState.GameStateManager;
@@ -35,6 +36,11 @@ public class Level1State extends GameState{
 	public Level1State(GameStateManager gsm){
 		super(gsm);
 		init();
+		try {
+			gsm.save();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void init() {

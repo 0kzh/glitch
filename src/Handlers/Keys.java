@@ -23,14 +23,19 @@ public class Keys{
 	public static int ENTER = 6;
 	public static int ESCAPE = 7;
 	
+	public static int keyLeft = KeyEvent.VK_LEFT;
+	public static int keyRight = KeyEvent.VK_RIGHT;
+	public static int keyZ = KeyEvent.VK_Z;
+	public static int keyX = KeyEvent.VK_X;
+	
 	
 	public static void keySet(int i, boolean b) {
 		if(i == KeyEvent.VK_UP) keyState[UP] = b;
-		else if(i == KeyEvent.VK_LEFT) keyState[LEFT] = b;
+		else if(i == keyLeft) keyState[LEFT] = b;
 		else if(i == KeyEvent.VK_DOWN) keyState[DOWN] = b;
-		else if(i == KeyEvent.VK_RIGHT) keyState[RIGHT] = b;
-		else if(i == KeyEvent.VK_Z) keyState[BUTTON1] = b;
-		else if(i == KeyEvent.VK_X) keyState[BUTTON2] = b;
+		else if(i == keyRight) keyState[RIGHT] = b;
+		else if(i == keyZ) keyState[BUTTON1] = b;
+		else if(i == keyX) keyState[BUTTON2] = b;
 		else if(i == KeyEvent.VK_ENTER) keyState[ENTER] = b;
 		else if(i == KeyEvent.VK_ESCAPE) keyState[ESCAPE] = b;
 	}
@@ -65,5 +70,4 @@ public class Keys{
 		}
 		return false;
 	}
-	
 }

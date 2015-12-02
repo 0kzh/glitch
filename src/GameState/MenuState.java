@@ -4,7 +4,14 @@ import java.awt.*;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Scanner;
+
 import Audio.JukeBox;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -18,7 +25,7 @@ public class MenuState extends GameState {
 	private Background bg;
 	
 	private int currentChoice = 0;
-	private String[] options = {"Start", "Options", "Quit"};
+	private String[] options = {"New", "Load", "Options", "Quit"};
 	private String copyright = "2015 Kelvin Zhang";
 	private String version = "Version 1.0";
 	private boolean buttonPressed = false;
@@ -32,6 +39,12 @@ public class MenuState extends GameState {
 	public MenuState(GameStateManager gsm){
 		
 		super(gsm);
+		
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
 		
 		try{
 			
@@ -77,6 +90,8 @@ public class MenuState extends GameState {
 				g.drawImage(icon, 120, 123, null);
 			}else if(currentChoice == 2){
 				g.drawImage(icon, 120, 138, null);
+			}else if(currentChoice == 3){
+				g.drawImage(icon, 120, 153, null);
 			}
 			g.drawString(options[i], 145, 120 + i * 15);
 		}
@@ -89,16 +104,38 @@ public class MenuState extends GameState {
 
 	private void select(){
 		if(currentChoice == 0){
-			//start
+			//new game
 			
 			gsm.setState(GameStateManager.LEVEL1STATE);
+			try {
+				Writer wr = new BufferedWriter(new FileWriter("save.txt"));
+				wr.append("1");
+				wr.close();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		if(currentChoice == 1){
-			// options
+			//load
+			try {
+				Scanner in = new Scanner(new File("save.txt"));
+				while(in.hasNextLine()){
+					gsm.setState(in.nextInt());
+				}
+				in.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		if(currentChoice == 2){
+			//options
+			gsm.setState(GameStateManager.OPTIONSSTATE);
+		}
+		
+		if(currentChoice == 3){
 			//exit
 			System.exit(0);
 		}
