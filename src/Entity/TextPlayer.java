@@ -155,22 +155,18 @@ public class TextPlayer extends MapObject{
 	
 	public void update() {
 		
-		if((int)(x / tileSize) > 0 && (int)(y / tileSize) > 0){
+		if(x > 0 && y > 0 && x < tileMap.getWidth() && y < tileMap.getHeight()){
 			if(tileMap.getType((int) y / tileSize, (int) (x) / tileSize) == Tile.DAMAGING){
 				health = 0;
 			}
 		}
 		
-		if(bl == Tile.DAMAGING || br == Tile.DAMAGING || tl == Tile.DAMAGING || tr == Tile.DAMAGING){
-			health = 0;	
+		if(y > tileMap.getHeight()){
+			health = 0;
 		}
 		
-		if(tl == Tile.TERMINAL || tr == Tile.TERMINAL){
-			if(Keys.isPressed(Keys.BUTTON1)){
-				//if z is pressed, show console
-				
-				
-			}
+		if(bl == Tile.DAMAGING || br == Tile.DAMAGING || tl == Tile.DAMAGING || tr == Tile.DAMAGING){
+			health = 0;	
 		}
 		
 		if(x >= tileMap.getWidth() - tileSize/2){

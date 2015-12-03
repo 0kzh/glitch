@@ -25,7 +25,7 @@ public class Level1State extends GameState{
 	private TextPlayer player;
 	
 	
-	//private ArrayList<Enemy> enemies;
+	private ArrayList<Enemy> enemies;
 	//private ArrayList<Explosion> explosions; 
 	private DialogBox[] dialog = {new DialogBox("...", 1), new DialogBox("Where am I?", 1), new DialogBox("GREETINGS. I SEE YOU HAVE AWOKEN.", 2), new DialogBox("THIS IS THE MATRIX, WHERE NO ONE LEAVES", 2), new DialogBox("GOOD LUCK ESCAPING, NOONE EVER HAS!", 2), new DialogBox("hahaha!!", 2), new DialogBox("HAHahA!!", 2), new DialogBox("HAHAHA!!11!!1", 2)}; 
 	private int index;
@@ -52,18 +52,35 @@ public class Level1State extends GameState{
 		tileMap.setTween(1);
 		
 		bg = new Background("/Backgrounds/level1bg.png", 0.1);
-		
+		populateEnemies();
 		player = new TextPlayer(tileMap);
 		//player.setSpawnPoint(489, 55);
 		//player.setPosition(489, 55);
-		player.setSpawnPoint(51, 380);
-		player.setPosition(51, 380);
+		player.setSpawnPoint(32, 374);
+		player.setPosition(32, 374);
 		//hud = new HUD(player);
 		
 		
 		JukeBox.load("/Music/level1-1.mp3", "level1");
 		JukeBox.load("/SFX/press.mp3", "press");
 		JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
+		
+	}
+	
+private void populateEnemies() {
+		
+		enemies = new ArrayList<Enemy>();
+		
+		Slugger s;
+		Point[] points = new Point[] {
+			new Point(315, 116),
+			new Point(421, 116)
+		};
+		for(int i = 0; i < points.length; i++) {
+			s = new Slugger(tileMap);
+			s.setPosition(points[i].x, points[i].y);
+			enemies.add(s);
+		}
 		
 	}
 	
@@ -109,8 +126,13 @@ public class Level1State extends GameState{
 			
 			bg.setPosition(tileMap.getx(), tileMap.gety());
 			
+			for(int i = 0; i < enemies.size(); i++) {
+				Enemy e = enemies.get(i);
+				e.update();
+			}
+			
 			// attack enemies
-			//player.checkAttack(enemies);
+			player.checkAttack(enemies);
 		}
 		
 		
@@ -134,6 +156,10 @@ public class Level1State extends GameState{
 		
 		if(dbox1 != null && !dbox1.shouldRemove()){
 			dbox1.draw(g);
+		}
+		
+		for(int i = 0; i < enemies.size(); i++) {
+			enemies.get(i).draw(g);
 		}
 		
 		try{
