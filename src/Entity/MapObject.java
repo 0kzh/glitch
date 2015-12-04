@@ -113,9 +113,6 @@ public abstract class MapObject {
 		bottomLeft = bl == Tile.BLOCKED;
 		bottomRight = br == Tile.BLOCKED;
 		
-		
-		
-		
 	}
 	
 	public void checkTileMapCollision() {

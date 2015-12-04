@@ -7,7 +7,7 @@ import javax.imageio.ImageIO;
 
 import TileMap.TileMap;
 
-public class MovingPlatform extends MapObject{
+public class MovingPlatform extends Platform{
 	private BufferedImage[] sprites;
 	
 	public MovingPlatform(TileMap tm){
@@ -29,7 +29,7 @@ public class MovingPlatform extends MapObject{
 			
 			sprites = new BufferedImage[1];
 			for(int i = 0; i < sprites.length; i++){
-				sprites[i] = spritesheet.getSubimage(i * width, 0, width, height);
+				sprites[i] = spritesheet.getSubimage(0, 0, 64, 16);
 			}
 			
 		}catch(Exception e){
@@ -41,7 +41,6 @@ public class MovingPlatform extends MapObject{
 		animation.setDelay(300);
 		
 		right = true;
-		facingRight = true;
 		
 	}
 	
@@ -61,24 +60,21 @@ public class MovingPlatform extends MapObject{
 	}
 	
 	public void update(){
-		
-		//update position
-		getNextPosition();
-		setPosition(xtemp, ytemp);
+		//update position	
 		
 		//if it hits wall, turn
-		if(right && dx == 0) {
+		if(right && dx == 0.0) {
 			right = false;
 			left = true;
-			facingRight = false;
 		}
 		
-		else if(left && dx == 0){
+		else if(left && dx == 0.0){
 			right = true;
 			left = false;
-			facingRight = true;
 		}
 		
+		getNextPosition();
+		setPosition(xtemp, ytemp);
 		
 		//update animation
 		animation.update();
@@ -88,7 +84,7 @@ public class MovingPlatform extends MapObject{
 	public void draw(Graphics2D g) {
 		
 		setMapPosition();
-		
+		checkTileMapCollision();
 		super.draw(g);
 		
 	}

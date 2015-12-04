@@ -104,8 +104,15 @@ public class TextPlayer extends MapObject{
 				health = 0;	
 			}
 		}
-		
-		
+	}
+	
+	public void checkPlatformCollision(ArrayList<MovingPlatform> platforms){
+		for(int i = 0; i < platforms.size(); i++){
+			MovingPlatform mp = platforms.get(i);
+			if(intersects(mp)){
+				
+			}
+		}
 	}
 	
 	private void getNextPosition() {
@@ -154,6 +161,7 @@ public class TextPlayer extends MapObject{
 	}
 	
 	public void update() {
+		
 		
 		if(x > 0 && y > 0 && x < tileMap.getWidth() && y < tileMap.getHeight()){
 			if(tileMap.getType((int) y / tileSize, (int) (x) / tileSize) == Tile.DAMAGING){

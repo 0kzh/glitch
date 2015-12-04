@@ -133,6 +133,7 @@ private void populateEnemies() {
 			
 			// attack enemies
 			player.checkAttack(enemies);
+			//player.checkPlatformCollision(platforms);
 		}
 		
 		

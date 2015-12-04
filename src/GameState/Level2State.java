@@ -115,6 +115,7 @@ public class Level2State extends GameState{
 		if(console == null){
 			handleInput();
 			player.update();
+			
 		}
 		
 		if(Keys.isPressed(Keys.BUTTON1)){
@@ -149,7 +150,7 @@ public class Level2State extends GameState{
 		
 		// attack enemies
 		player.checkAttack(enemies);
-		
+		player.checkPlatformCollision(platforms);
 		
 		
 	}
