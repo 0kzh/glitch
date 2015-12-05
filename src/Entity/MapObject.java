@@ -108,10 +108,10 @@ public abstract class MapObject {
 		bl = tileMap.getType(bottomTile, leftTile);
 		br = tileMap.getType(bottomTile, rightTile);
 		
-		topLeft = tl == Tile.BLOCKED;
-		topRight = tr == Tile.BLOCKED;
-		bottomLeft = bl == Tile.BLOCKED;
-		bottomRight = br == Tile.BLOCKED;
+		topLeft = tl == Tile.BLOCKED || tl == Tile.PLATFORM;
+		topRight = tr == Tile.BLOCKED || tr == Tile.PLATFORM;
+		bottomLeft = bl == Tile.BLOCKED || bl == Tile.PLATFORM;
+		bottomRight = br == Tile.BLOCKED || br == Tile.PLATFORM;
 		
 	}
 	

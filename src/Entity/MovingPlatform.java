@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 
+import TileMap.Tile;
 import TileMap.TileMap;
 
 public class MovingPlatform extends Platform{
@@ -44,6 +45,7 @@ public class MovingPlatform extends Platform{
 		
 	}
 	
+	
 	private void getNextPosition() {
 		
 		if(left){
@@ -61,6 +63,19 @@ public class MovingPlatform extends Platform{
 	
 	public void update(){
 		//update position	
+		
+		//set blocks to blocked tiles?
+		if(tileMap.isLoaded()){
+			for(int i = 0; i < 4; i++){
+				//System.out.println((int) (xtemp - cwidth / 2) / tileSize + 1);
+				//System.out.println(tileMap.getType((int) (xtemp - cwidth / 2) / tileSize + 1, (int) (ytemp - cheight / 2) / tileSize));
+				int row = (int) (ytemp - cheight / 2) / tileSize;
+				int col = (int) (xtemp - cwidth / 2) / tileSize + i;
+				tileMap.setType(row, col, 9);
+				if(tileMap.getType(row, col - 4) != Tile.BLOCKED) tileMap.setType(row, col - 4, 0);
+				if(tileMap.getType(row, col + 1) != Tile.BLOCKED) tileMap.setType(row, col + 1, 0);
+			}
+		}
 		
 		//if it hits wall, turn
 		if(right && dx == 0.0) {

@@ -12,6 +12,7 @@ public class Tile {
 	public static final int BLOCKED = 1;
 	public static final int DAMAGING = 2;
 	public static final int TERMINAL = 3;
+	public static final int PLATFORM = 4;
 	
 	public Tile(BufferedImage image, int type){
 		this.image = image;

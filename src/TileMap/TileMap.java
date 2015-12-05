@@ -19,6 +19,7 @@ public class TileMap {
 	private int ymin;
 	private int xmax;
 	private int ymax;
+	private boolean loaded;
 	
 	private double tween;
 	
@@ -46,6 +47,7 @@ public class TileMap {
 		numRowsToDraw = GamePanel.HEIGHT / tileSize + 2;
 		numColsToDraw = GamePanel.WIDTH / tileSize + 2;
 		tween = 0.07;
+		loaded = false;
 	}
 	
 	public void loadTiles(String s){
@@ -72,6 +74,8 @@ public class TileMap {
 				if(s.equals("/Tilesets/texttileset.png")){
 					if(col == 3){
 						tiles[1][col] = new Tile(subimage, Tile.DAMAGING);
+					}else if(col == 4){
+						tiles[1][col] = new Tile(subimage, Tile.PLATFORM);
 					}else{
 						tiles[1][col] = new Tile(subimage, Tile.BLOCKED);
 					}
@@ -113,7 +117,7 @@ public class TileMap {
 					map[row][col] = Integer.parseInt(tokens[col]);
 				}
 			}
-			
+			loaded = true;
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -127,6 +131,7 @@ public class TileMap {
 	public int getHeight() { return height; }
 	public int getNumRows() { return numRows; }
 	public int getNumCols() { return numCols; }
+	public boolean isLoaded() { return loaded; }
 	
 	public int getType(int row, int col){
 		int rc = map[row][col];
@@ -134,6 +139,10 @@ public class TileMap {
 		int c = rc % numTilesAcross;
 		
 		return tiles[r][c].getType();
+	}
+	
+	public void setType(int row, int col, int type){
+		map[row][col] = type;
 	}
 	
 	public void setTween(double t){
