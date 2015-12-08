@@ -111,7 +111,7 @@ public class TextPlayer extends MapObject{
 		for(int i = 0; i < platforms.size(); i++){
 			MovingPlatform mp = platforms.get(i);
 			
-			if(bl == Tile.PLATFORM || br == Tile.PLATFORM){
+			if((bl == Tile.PLATFORM || br == Tile.PLATFORM) && currentAction == IDLE){
 				//System.out.println(mp.dx);
 				dx = mp.dx * 1.66;
 				dy = mp.dy;

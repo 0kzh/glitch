@@ -14,7 +14,7 @@ import Main.GamePanel;
 import TileMap.*;
 import Audio.JukeBox;
 
-public class Level2State extends GameState{
+public class Level3State extends GameState{
 
 	private TileMap tileMap;
 	private Background bg;
@@ -27,12 +27,12 @@ public class Level2State extends GameState{
 	private ArrayList<Enemy> enemies;
 	private ArrayList<MovingPlatform> platforms;
 	//private ArrayList<Explosion> explosions; 
-	private DialogBox[] dialog = {new DialogBox("...", 1), new DialogBox("Where am I?", 1), new DialogBox("Welcome to the Matrix.", 2), new DialogBox("... What?", 1), new DialogBox("It is where deleted objects go.", 2)}; 
+	private DialogBox[] dialog = {new DialogBox("I see you are still alive...", 2), new DialogBox("You're better than I thought.", 2), new DialogBox("Wh-who are you?", 1), new DialogBox("That... remains a secret.", 2)}; 
 	private int index;
 	private int index2 = 0;
 	private boolean keyPressed;
 	
-	public Level2State(GameStateManager gsm){
+	public Level3State(GameStateManager gsm){
 		super(gsm);
 		init();
 		try {
@@ -46,17 +46,17 @@ public class Level2State extends GameState{
 		//initialize tile map
 		tileMap = new TileMap(16);
 		tileMap.loadTiles("/Tilesets/texttileset.png");
-		tileMap.loadMap("/Maps/level1-2.map");
+		tileMap.loadMap("/Maps/level1-3.map");
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
 		
 		bg = new Background("/Backgrounds/level1bg.png", 0.1);
 		populateEnemies();
 		player = new TextPlayer(tileMap);
-		player.setSpawnPoint(19, 365);
-		player.setPosition(19, 365);
-		//player.setSpawnPoint(476, 40);
-		//player.setPosition(476, 40);
+		player.setSpawnPoint(19, 400 - player.getCHeight() / 2);
+		player.setPosition(19, 400 - player.getCHeight() / 2);
+		//player.setSpawnPoint(51, 380);
+		//player.setPosition(51, 380);
 		//hud = new HUD(player);
 		
 		
@@ -75,8 +75,8 @@ public class Level2State extends GameState{
 		
 		Slugger s;
 		Point[] points = new Point[] {
-			new Point(163, 402),
-			new Point(177, 131)
+			new Point(490, 280),
+			new Point(474, 380)
 		};
 		for(int i = 0; i < points.length; i++) {
 			s = new Slugger(tileMap);
@@ -86,7 +86,7 @@ public class Level2State extends GameState{
 		
 		MovingPlatform mp;
 		Point[] points1 = new Point[] {
-				new Point(311, 155)
+				new Point(202, 128)
 			};
 			for(int i = 0; i < points1.length; i++) {
 				mp = new MovingPlatform(tileMap);
@@ -95,13 +95,20 @@ public class Level2State extends GameState{
 			}
 		
 	}
+	
+	private void printDialogue() {
+		if(index < dialog.length){
+			dbox = dialog[index];
+		}
+		
+	}
 
 	public void update() {
 		// check keys
 		
-		//printDialogue();
+		printDialogue();
 		
-		if(console == null){
+		if(console == null && index >= dialog.length){
 			handleInput();
 			player.update();
 			
@@ -113,11 +120,10 @@ public class Level2State extends GameState{
 					console = new Console(2);
 				}else{
 					if(dbox1 == null){
-						
-						dbox1 = new DialogBox("Wut lol", 1);
+						dbox1 = new DialogBox("", 1);
 					}
 					if(dbox1.isDone()){
-						gsm.setState(GameStateManager.LEVEL3STATE);
+						//gsm.setState(GameStateManager.LEVEL3STATE);
 					}
 				}
 			}
@@ -134,7 +140,6 @@ public class Level2State extends GameState{
 		
 		for(int i = 0; i < platforms.size(); i++) {
 			MovingPlatform mp = platforms.get(i);
-			mp.setPosition(311, 155);
 			mp.update();
 		}
 		
@@ -169,11 +174,13 @@ public class Level2State extends GameState{
 		//draw hud
 		//hud.draw(g);
 		try{
-			if(!dbox1.shouldRemove() && dbox1 != null){
-				dbox1.draw(g);
-				if(Keys.isPressed(Keys.BUTTON1) && dbox1.isDone()){
-					dbox1.setRemove(true);
+			if(!dbox.shouldRemove() && dbox != null){
+				dbox.draw(g);
+				if(Keys.isPressed(Keys.BUTTON1) && !keyPressed && dbox.isDone()){
+					dbox.setRemove(true);
+					keyPressed = true;
 				}else if(!Keys.isPressed(Keys.BUTTON1)){
+					keyPressed = false;
 				}
 			}
 			else if(index < dialog.length){
