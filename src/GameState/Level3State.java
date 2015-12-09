@@ -31,6 +31,7 @@ public class Level3State extends GameState{
 	private int index;
 	private int index2 = 0;
 	private boolean keyPressed;
+	private boolean pauseKeyPressed;
 	
 	public Level3State(GameStateManager gsm){
 		super(gsm);
@@ -86,7 +87,7 @@ public class Level3State extends GameState{
 		
 		MovingPlatform mp;
 		Point[] points1 = new Point[] {
-				new Point(202, 128)
+				new Point(176, 128)
 			};
 			for(int i = 0; i < points1.length; i++) {
 				mp = new MovingPlatform(tileMap);
@@ -191,7 +192,14 @@ public class Level3State extends GameState{
 	}
 	
 	public void handleInput() {
-		//if(Keys.isPressed(Keys.ESCAPE)) gsm.setPaused(true);
+		if(Keys.isPressed(Keys.ESCAPE)){
+			if(!pauseKeyPressed){
+				gsm.setPaused(true);
+				pauseKeyPressed = true;
+			}
+		}else{
+			pauseKeyPressed = false;
+		}
 		if(player.getHealth() == 0) return;
 		player.setUp(Keys.keyState[Keys.UP]);
 		player.setLeft(Keys.keyState[Keys.LEFT]);

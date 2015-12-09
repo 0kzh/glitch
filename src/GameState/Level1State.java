@@ -27,11 +27,12 @@ public class Level1State extends GameState{
 	
 	private ArrayList<Enemy> enemies;
 	//private ArrayList<Explosion> explosions; 
-	private DialogBox[] dialog = {new DialogBox("...", 1), new DialogBox("Where am I?", 1), new DialogBox("GREETINGS. I SEE YOU HAVE AWOKEN.", 2), new DialogBox("THIS IS THE MATRIX, WHERE NO ONE LEAVES", 2), new DialogBox("GOOD LUCK ESCAPING, NOONE EVER HAS!", 2), new DialogBox("hahaha!!", 2), new DialogBox("HAHahA!!", 2), new DialogBox("HAHAHA!!11!!1", 2)}; 
+	private DialogBox[] dialog = {new DialogBox("...", 1), new DialogBox("GREETINGS. I SEE YOU HAVE AWOKEN.", 2), new DialogBox("WELCOME TO THE SOURCE CODE.", 2), new DialogBox("JUST TRY TO MAKE IT OUT ALIVE!", 2), new DialogBox("hahaha!", 2), new DialogBox("Hahaha!", 2), new DialogBox("HAHAHA!!11!!1", 2)}; 
 	private int index;
 	private int index2 = 0;
 	private boolean keyPressed;
 	private boolean talking;
+	private boolean pauseKeyPressed;
 	
 	public Level1State(GameStateManager gsm){
 		super(gsm);
@@ -194,7 +195,17 @@ private void populateEnemies() {
 	}
 	
 	public void handleInput() {
-		//if(Keys.isPressed(Keys.ESCAPE)) gsm.setPaused(true);
+		
+		if(Keys.isPressed(Keys.ESCAPE)){
+			if(!pauseKeyPressed){
+				gsm.setPaused(true);
+				pauseKeyPressed = true;
+			}
+		}else{
+			pauseKeyPressed = false;
+		}
+			
+		
 		if(player.getHealth() == 0) return;
 		player.setUp(Keys.keyState[Keys.UP]);
 		player.setLeft(Keys.keyState[Keys.LEFT]);

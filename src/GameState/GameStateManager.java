@@ -6,12 +6,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
+import Main.GamePanel;
+
+import GameState.PauseState;
+
 import Audio.JukeBox;
 
 public class GameStateManager {
 
 	private GameState[] gameStates;
 	private int currentState;
+	
+	private PauseState pauseState;
+	public boolean paused;
 	
 	public static final int NUMGAMESTATES = 5;
 	public static final int MENUSTATE = 0;
@@ -25,7 +32,12 @@ public class GameStateManager {
 		
 		gameStates = new GameState[NUMGAMESTATES];
 		JukeBox.init();
+		JukeBox.load("/SFX/pause.mp3", "pause");
 		currentState = MENUSTATE;
+		
+		pauseState = new PauseState(this);
+		paused = false;
+		
 		loadState(currentState);
 		
 	}
@@ -73,15 +85,35 @@ public class GameStateManager {
 		wr.close();
 	}
 	
-	public void update(){
-		if(gameStates[currentState] != null){
-			gameStates[currentState].update();
+	public void setPaused(boolean b) { 
+		paused = b; 
+		pauseState.pauseButton = true; 
+		JukeBox.play("pause");
+		
+		if(b){
+			JukeBox.stop("level1");
+		}else{
+			JukeBox.resume("level1", true);
 		}
 	}
 	
-	public void draw(Graphics2D g){
-		if(gameStates[currentState] != null){
-			gameStates[currentState].draw(g);
+	public void update() {
+		if(paused) {
+			pauseState.update();
+			return;
+		}
+		if(gameStates[currentState] != null) gameStates[currentState].update();
+	}
+	
+	public void draw(Graphics2D g) {
+		if(paused) {
+			pauseState.draw(g);
+			return;
+		}
+		if(gameStates[currentState] != null) gameStates[currentState].draw(g);
+		else {
+			g.setColor(java.awt.Color.BLACK);
+			g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 		}
 	}
 	

@@ -31,6 +31,7 @@ public class Level2State extends GameState{
 	private int index;
 	private int index2 = 0;
 	private boolean keyPressed;
+	private boolean pauseKeyPressed;
 	
 	public Level2State(GameStateManager gsm){
 		super(gsm);
@@ -184,7 +185,14 @@ public class Level2State extends GameState{
 	}
 	
 	public void handleInput() {
-		//if(Keys.isPressed(Keys.ESCAPE)) gsm.setPaused(true);
+		if(Keys.isPressed(Keys.ESCAPE)){
+			if(!pauseKeyPressed){
+				gsm.setPaused(true);
+				pauseKeyPressed = true;
+			}
+		}else{
+			pauseKeyPressed = false;
+		}
 		if(player.getHealth() == 0) return;
 		player.setUp(Keys.keyState[Keys.UP]);
 		player.setLeft(Keys.keyState[Keys.LEFT]);

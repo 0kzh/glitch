@@ -46,9 +46,9 @@ public class Console{
 		if(stage == 1){
 			g.drawString("view patchnotes", 182, 77);
 			g.drawString("Version 1.0:", 35, 88);
-			g.drawString("- Added enemies", 35, 99);
-			g.drawString("- Fixed spaghetti code", 35, 110);
-			g.drawString("- Sent a glitch to the matrix", 35, 121);
+			g.drawString("Hello everyone! I am the game developer.", 35, 99);
+			g.drawString("As you may know, this is the official release of the game.", 35, 110);
+			g.drawString("Hopefully, all bugs have been fixed.", 35, 121);
 		}else if(stage == 2){
 			g.drawString("view patchnotes", 182, 77);
 			g.drawString("Version 1.1:", 35, 88);

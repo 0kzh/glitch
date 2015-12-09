@@ -76,6 +76,12 @@ public class JukeBox {
 		if(clips.get(s).isRunning()) clips.get(s).stop();
 	}
 	
+	public static void stopAll(){
+		for(String key : clips.keySet()){
+			if(clips.get(key).isRunning()) clips.get(key).stop();
+		}
+	}
+	
 	public static void resume(String s, boolean b) {
 		if(mute) return;
 		if(clips.get(s).isRunning()) return;
