@@ -109,7 +109,7 @@ public class MenuState extends GameState {
 			gsm.setState(GameStateManager.LEVEL1STATE);
 			try {
 				Writer wr = new BufferedWriter(new FileWriter("save.txt"));
-				wr.append("1");
+				wr.append("2");
 				wr.close();
 			}
 			catch (IOException e) {

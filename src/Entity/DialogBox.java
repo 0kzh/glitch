@@ -71,7 +71,7 @@ public class DialogBox{
 		
 		
 		try {
-			Thread.sleep(55);
+			Thread.sleep(40);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

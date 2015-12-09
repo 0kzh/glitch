@@ -18,11 +18,12 @@ public class OptionsState extends GameState {
 	private Background bg;
 	
 	private static int currentChoice = 0;
-	private String[] keys = {"Jump: ", "Shoot: ", "Left: ", "Right: ", "<- Back"};
+	private String[] keys = {"Jump: ", "Shoot: ", "Left: ", "Right: ", "Mute: ", "<- Back"};
 	private String copyright = "2015 Kelvin Zhang";
 	private String version = "Version 1.0";
 	private boolean buttonPressed = false;
 	private static boolean enterPressed = false;
+	private static boolean mutePressed = false;
 	
 	public static boolean reading;
 	public static int keyPress;
@@ -97,8 +98,10 @@ public class OptionsState extends GameState {
 				g.drawImage(icon, 110, 138, null);
 			}else if(currentChoice == 3){
 				g.drawImage(icon, 110, 153, null);
+			}else if(currentChoice == 4){
+				g.drawImage(icon, 110, 168, null);
 			}
-			if(i != 4) g.drawString(keys[i], 135, 120 + i * 15);
+			if(i != 5) g.drawString(keys[i], 135, 120 + i * 15);
 			if(i == 0){
 				if(currentChoice == 0 && reading){
 					g.drawString("Press a key...", 180, 120 + i * 15);
@@ -124,6 +127,8 @@ public class OptionsState extends GameState {
 					g.drawString(KeyEvent.getKeyText(Keys.keyRight), 180, 120 + i * 15);
 				}
 			}else if(i == 4){
+					g.drawString(Boolean.toString(JukeBox.isMuted()), 180, 120 + i * 15);
+			}else if(i == 5){
 				g.drawString(keys[i], 135, 220);
 			}
 		}
@@ -192,7 +197,15 @@ public class OptionsState extends GameState {
 			}
 		}
 		
-		else if (currentChoice == 4){
+		else if(currentChoice == 4){
+			// mute
+			if(!enterPressed){
+				enterPressed = true;
+				JukeBox.mute(!JukeBox.isMuted());
+			}
+		}
+		
+		else if (currentChoice == 5){
 			// back
 			gsm.setState(GameStateManager.MENUSTATE);
 			

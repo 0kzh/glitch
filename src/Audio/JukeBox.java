@@ -54,6 +54,10 @@ public class JukeBox {
 		mute = b;
 	}
 	
+	public static boolean isMuted(){
+		return mute;
+	}
+	
 	public static boolean isPlaying(String s){
 		if(clips.get(s).isRunning()){
 			return true;
