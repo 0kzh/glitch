@@ -14,7 +14,7 @@ import Main.GamePanel;
 import TileMap.*;
 import Audio.JukeBox;
 
-public class Level1State extends GameState{
+public class Level0State extends GameState{
 
 	private TileMap tileMap;
 	private Background bg;
@@ -24,22 +24,18 @@ public class Level1State extends GameState{
 	private DialogBox dbox1;
 	private TextPlayer player;
 	
-	
-	private ArrayList<Enemy> enemies;
 	//private ArrayList<Explosion> explosions; 
 	private DialogBox[] dialog = {
-			new DialogBox("YOU IDIOT.", 2), 
-			new DialogBox("THAT STAR KILLS YOU.", 2), 
-			new DialogBox("hahaha!", 2),
-			new DialogBox("HaHaHa!!", 2),
-			new DialogBox("HAHAHAHA!11!1!", 2)}; 
+			new DialogBox("Greetings Player! Welcome to GLITCH!", 2), 
+			new DialogBox("Use the right and left arrow keys to move.", 2), 
+			new DialogBox("Use [Z] to jump!", 2)}; 
 	private int index;
 	private int index2 = 0;
 	private boolean keyPressed;
 	private boolean talking;
 	private boolean pauseKeyPressed;
 	
-	public Level1State(GameStateManager gsm){
+	public Level0State(GameStateManager gsm){
 		super(gsm);
 		init();
 		try {
@@ -53,40 +49,22 @@ public class Level1State extends GameState{
 		//initialize tile map
 		tileMap = new TileMap(16);
 		tileMap.loadTiles("/Tilesets/texttileset.png");
-		tileMap.loadMap("/Maps/level1-1.map");
+		tileMap.loadMap("/Maps/intro.map");
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
 		
 		bg = new Background("/Backgrounds/level1bg.png", 0.1);
-		populateEnemies();
 		player = new TextPlayer(tileMap);
 		//player.setSpawnPoint(489, 55);
 		//player.setPosition(489, 55);
-		player.setSpawnPoint(32, 374);
-		player.setPosition(32, 374);
+		player.setSpawnPoint(32, 205);
+		player.setPosition(32, 205);
 		//hud = new HUD(player);
 		
 		
 		JukeBox.load("/Music/level1-1.mp3", "level1");
 		JukeBox.load("/SFX/press.mp3", "press");
 		JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
-		
-	}
-	
-private void populateEnemies() {
-		
-		enemies = new ArrayList<Enemy>();
-		
-		Slugger s;
-		Point[] points = new Point[] {
-			new Point(315, 116),
-			new Point(421, 116)
-		};
-		for(int i = 0; i < points.length; i++) {
-			s = new Slugger(tileMap);
-			s.setPosition(points[i].x, points[i].y);
-			enemies.add(s);
-		}
 		
 	}
 	
@@ -98,7 +76,7 @@ private void populateEnemies() {
 			talking = true;
 		}else{
 			fs.setRemove(true);
-			talking = false;
+			if(dbox1 == null) talking = false;
 		}
 		
 	}
@@ -108,38 +86,33 @@ private void populateEnemies() {
 		
 		printDialogue();
 		if(!talking){
-			if(console == null){
-				handleInput();
-				player.update();
-			}
-			if(Keys.isPressed(Keys.BUTTON1)){
-				if(player.tl == Tile.TERMINAL || player.tr == Tile.TERMINAL || player.bl == Tile.TERMINAL || player.br == Tile.TERMINAL){
-					if(console == null){
-						console = new Console(1);
-					}else{
-						if(dbox1 == null){
-							dbox1 = new DialogBox("I'm... a glitch?", 1);
-						}
-						if(dbox1.isDone()){
-							dbox1.setRemove(true);
-							gsm.setState(GameStateManager.LEVEL2STATE);
-						}
-					}
+			handleInput();
+			player.update();
+			
+			if(player.getx() < 186 && player.gety() < 60){
+				if(dbox1 == null){
+					dbox1 = new DialogBox("See that red star? Collect it for points!", 2);
+					talking = true;
 				}
 			}
+			
+			if(player.getHealth() <= 0){
+				gsm.setState(GameStateManager.LEVEL1STATE);
+			}
+			
 			tileMap.setPosition(GamePanel.WIDTH / 2 - player.getx(), GamePanel.HEIGHT / 2 - player.gety());
 			
 			
 			bg.setPosition(tileMap.getx(), tileMap.gety());
-			
-			for(int i = 0; i < enemies.size(); i++) {
-				Enemy e = enemies.get(i);
-				e.update();
+		}
+		
+		if(Keys.isPressed(Keys.BUTTON1)){
+			if(dbox1 != null){
+				if(dbox1.isDone()){
+					dbox1.setRemove(true);
+					talking = false;
+				}
 			}
-			
-			// attack enemies
-			player.checkAttack(enemies);
-			//player.checkPlatformCollision(platforms);
 		}
 		
 		
@@ -164,11 +137,6 @@ private void populateEnemies() {
 		if(dbox1 != null && !dbox1.shouldRemove()){
 			dbox1.draw(g);
 		}
-		
-		for(int i = 0; i < enemies.size(); i++) {
-			enemies.get(i).draw(g);
-		}
-		
 		try{
 			if(!fs.shouldRemove()){
 				fs.draw(g);

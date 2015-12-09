@@ -49,7 +49,7 @@ public abstract class MapObject {
 	
 	// animation
 	protected Animation animation;
-	protected int currentAction;
+	protected static int currentAction;
 	protected int previousAction;
 	protected boolean facingRight;
 	protected boolean facingUp;

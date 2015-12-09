@@ -25,7 +25,6 @@ public class Level2State extends GameState{
 	private TextPlayer player;
 	
 	private ArrayList<Enemy> enemies;
-	private ArrayList<MovingPlatform> platforms;
 	//private ArrayList<Explosion> explosions; 
 	private DialogBox[] dialog = {new DialogBox("...", 1), new DialogBox("Where am I?", 1), new DialogBox("Welcome to the Matrix.", 2), new DialogBox("... What?", 1), new DialogBox("It is where deleted objects go.", 2)}; 
 	private int index;
@@ -72,7 +71,6 @@ public class Level2State extends GameState{
 	private void populateEnemies() {
 		
 		enemies = new ArrayList<Enemy>();
-		platforms = new ArrayList<MovingPlatform>();
 		
 		Slugger s;
 		Point[] points = new Point[] {
@@ -84,16 +82,6 @@ public class Level2State extends GameState{
 			s.setPosition(points[i].x, points[i].y);
 			enemies.add(s);
 		}
-		
-		MovingPlatform mp;
-		Point[] points1 = new Point[] {
-				new Point(311, 155)
-			};
-			for(int i = 0; i < points1.length; i++) {
-				mp = new MovingPlatform(tileMap);
-				mp.setPosition(points1[i].x, points1[i].y);
-				platforms.add(mp);
-			}
 		
 	}
 
@@ -133,15 +121,8 @@ public class Level2State extends GameState{
 			e.update();
 		}
 		
-		for(int i = 0; i < platforms.size(); i++) {
-			MovingPlatform mp = platforms.get(i);
-			mp.setPosition(311, 155);
-			mp.update();
-		}
-		
 		// attack enemies
 		player.checkAttack(enemies);
-		player.checkPlatformCollision(platforms);
 		
 		
 	}
@@ -157,11 +138,6 @@ public class Level2State extends GameState{
 		
 		//draw player
 		player.draw(g);
-		
-		for(int i = 0; i < platforms.size(); i++) {
-			platforms.get(i).draw(g);
-		}
-		
 		for(int i = 0; i < enemies.size(); i++) {
 			enemies.get(i).draw(g);
 		}

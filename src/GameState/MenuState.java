@@ -106,7 +106,7 @@ public class MenuState extends GameState {
 		if(currentChoice == 0){
 			//new game
 			
-			gsm.setState(GameStateManager.LEVEL1STATE);
+			gsm.setState(GameStateManager.INTROSTATE);
 			try {
 				Writer wr = new BufferedWriter(new FileWriter("save.txt"));
 				wr.append("2");

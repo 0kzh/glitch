@@ -20,12 +20,13 @@ public class GameStateManager {
 	private PauseState pauseState;
 	public boolean paused;
 	
-	public static final int NUMGAMESTATES = 5;
+	public static final int NUMGAMESTATES = 6;
 	public static final int MENUSTATE = 0;
 	public static final int OPTIONSSTATE = 1;
-	public static final int LEVEL1STATE = 2;
-	public static final int LEVEL2STATE = 3;
-	public static final int LEVEL3STATE = 4;
+	public static final int INTROSTATE = 2;
+	public static final int LEVEL1STATE = 3;
+	public static final int LEVEL2STATE = 4;
+	public static final int LEVEL3STATE = 5;
 	
 	
 	public GameStateManager() {
@@ -49,6 +50,10 @@ public class GameStateManager {
 		
 		if(state == OPTIONSSTATE){
 			gameStates[state] = new OptionsState(this);
+		}
+		
+		if(state == INTROSTATE){
+			gameStates[state] = new Level0State(this);
 		}
 		
 		if(state == LEVEL1STATE){
