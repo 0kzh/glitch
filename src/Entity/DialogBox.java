@@ -45,6 +45,28 @@ public class DialogBox{
 		
 	}
 	
+public DialogBox(String s, int character, boolean bold){
+		
+		toPrint = s.toCharArray();
+		remove = false;
+		try{
+			
+			if(character == 0){
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/avatar.png"));
+			}else if(character == 1){
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/textavatar.png"));
+			}else if(character == 2){
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar.png"));
+			}
+			
+			if(bold) font = new Font("Arial", Font.BOLD, 11);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+	}
+	
 	public boolean shouldRemove() { return remove; }
 	
 	public boolean isDone() { return done; }

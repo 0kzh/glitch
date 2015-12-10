@@ -28,7 +28,7 @@ public class Level1State extends GameState{
 	private ArrayList<Enemy> enemies;
 	//private ArrayList<Explosion> explosions; 
 	private DialogBox[] dialog = {
-			new DialogBox("YOU IDIOT.", 2), 
+			new DialogBox("YOU IDIOT.", 2, true), 
 			new DialogBox("THAT STAR KILLS YOU.", 2), 
 			new DialogBox("hahaha!", 2),
 			new DialogBox("HaHaHa!!", 2),
@@ -66,7 +66,7 @@ public class Level1State extends GameState{
 		player.setPosition(32, 374);
 		//hud = new HUD(player);
 		
-		
+		JukeBox.stopAll();
 		JukeBox.load("/Music/level1-1.mp3", "level1");
 		JukeBox.load("/SFX/press.mp3", "press");
 		JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);

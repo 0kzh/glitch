@@ -34,6 +34,7 @@ public class Level0State extends GameState{
 	private boolean keyPressed;
 	private boolean talking;
 	private boolean pauseKeyPressed;
+	private boolean introduced = false;
 	
 	public Level0State(GameStateManager gsm){
 		super(gsm);
@@ -62,9 +63,9 @@ public class Level0State extends GameState{
 		//hud = new HUD(player);
 		
 		
-		JukeBox.load("/Music/level1-1.mp3", "level1");
+		JukeBox.load("/Music/intro.mp3", "intro");
 		JukeBox.load("/SFX/press.mp3", "press");
-		JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
+		JukeBox.loop("intro", 600, JukeBox.getFrames("intro") - 2200);
 		
 	}
 	
@@ -72,7 +73,7 @@ public class Level0State extends GameState{
 		if(index < dialog.length){
 			fs = new FillScreen(Color.BLACK);
 			dbox = dialog[index];
-			JukeBox.stop("level1");
+			JukeBox.stop("intro");
 			talking = true;
 		}else{
 			fs.setRemove(true);
@@ -107,9 +108,10 @@ public class Level0State extends GameState{
 		}
 		
 		if(Keys.isPressed(Keys.BUTTON1)){
-			if(dbox1 != null){
+			if(dbox1 != null && !introduced){
 				if(dbox1.isDone()){
 					dbox1.setRemove(true);
+					introduced = true;
 					talking = false;
 				}
 			}
@@ -147,7 +149,7 @@ public class Level0State extends GameState{
 					Thread.sleep(10);
 					index2++;
 				}else{
-					JukeBox.resume("level1", true);
+					JukeBox.resume("intro", true);
 				}
 			}
 			
