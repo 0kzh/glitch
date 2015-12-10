@@ -4,6 +4,7 @@ import TileMap.*;
 
 import java.util.ArrayList;
 import Audio.JukeBox;
+import GameState.Level0State;
 import Handlers.Keys;
 
 import javax.imageio.ImageIO;
@@ -15,7 +16,7 @@ public class TextPlayer extends MapObject{
 	//player stuff
 	private int health;
 	private int maxHealth;
-	private boolean dead;
+	public boolean dead;
 	private int spawnX;
 	private int spawnY;
 	
@@ -205,6 +206,7 @@ public class TextPlayer extends MapObject{
 				JukeBox.play("dead");
 			}
 			if(animation.hasPlayedOnce()){
+				Level0State.playedOnce = true;
 				respawn();
 			}else{
 				dx = 0;

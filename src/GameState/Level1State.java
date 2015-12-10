@@ -21,15 +21,13 @@ public class Level1State extends GameState{
 	private Console console;
 	private FillScreen fs;
 	private DialogBox dbox;
+	private DialogBox dbox2;
 	private DialogBox dbox1;
 	private TextPlayer player;
 	
-	
-	private ArrayList<Enemy> enemies;
-	//private ArrayList<Explosion> explosions; 
 	private DialogBox[] dialog = {
-			new DialogBox("YOU IDIOT.", 2, true), 
-			new DialogBox("THAT STAR KILLS YOU.", 2), 
+			new DialogBox("JUST KIDDING.", 2, true), 
+			new DialogBox("THAT CAT JUST KILLED YOU.", 2), 
 			new DialogBox("hahaha!", 2),
 			new DialogBox("HaHaHa!!", 2),
 			new DialogBox("HAHAHAHA!11!1!", 2)}; 
@@ -38,6 +36,7 @@ public class Level1State extends GameState{
 	private boolean keyPressed;
 	private boolean talking;
 	private boolean pauseKeyPressed;
+	private boolean introduced = false;
 	
 	public Level1State(GameStateManager gsm){
 		super(gsm);
@@ -58,12 +57,11 @@ public class Level1State extends GameState{
 		tileMap.setTween(1);
 		
 		bg = new Background("/Backgrounds/level1bg.png", 0.1);
-		populateEnemies();
 		player = new TextPlayer(tileMap);
 		//player.setSpawnPoint(489, 55);
 		//player.setPosition(489, 55);
-		player.setSpawnPoint(32, 374);
-		player.setPosition(32, 374);
+		player.setSpawnPoint(55, 63);
+		player.setPosition(55, 63);
 		//hud = new HUD(player);
 		
 		JukeBox.stopAll();
@@ -72,24 +70,6 @@ public class Level1State extends GameState{
 		JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
 		
 	}
-	
-private void populateEnemies() {
-		
-		enemies = new ArrayList<Enemy>();
-		
-		Slugger s;
-		Point[] points = new Point[] {
-			new Point(315, 116),
-			new Point(421, 116)
-		};
-		for(int i = 0; i < points.length; i++) {
-			s = new Slugger(tileMap);
-			s.setPosition(points[i].x, points[i].y);
-			enemies.add(s);
-		}
-		
-	}
-	
 	private void printDialogue() {
 		if(index < dialog.length){
 			fs = new FillScreen(Color.BLACK);
@@ -98,7 +78,7 @@ private void populateEnemies() {
 			talking = true;
 		}else{
 			fs.setRemove(true);
-			talking = false;
+			if(dbox2 == null) talking = false;
 		}
 		
 	}
@@ -112,6 +92,14 @@ private void populateEnemies() {
 				handleInput();
 				player.update();
 			}
+			
+			if(player.getx() > 185 && player.gety() < 90){
+				if(dbox2 == null){
+					dbox2 = new DialogBox("Where am I?", 1);
+					talking = true;
+				}
+			}
+			
 			if(Keys.isPressed(Keys.BUTTON1)){
 				if(player.tl == Tile.TERMINAL || player.tr == Tile.TERMINAL || player.bl == Tile.TERMINAL || player.br == Tile.TERMINAL){
 					if(console == null){
@@ -131,15 +119,16 @@ private void populateEnemies() {
 			
 			
 			bg.setPosition(tileMap.getx(), tileMap.gety());
-			
-			for(int i = 0; i < enemies.size(); i++) {
-				Enemy e = enemies.get(i);
-				e.update();
+		}
+		
+		if(Keys.isPressed(Keys.BUTTON1)){
+			if(dbox2 != null && !introduced){
+				if(dbox2.isDone()){
+					dbox2.setRemove(true);
+					introduced = true;
+					talking = false;
+				}
 			}
-			
-			// attack enemies
-			player.checkAttack(enemies);
-			//player.checkPlatformCollision(platforms);
 		}
 		
 		
@@ -165,8 +154,8 @@ private void populateEnemies() {
 			dbox1.draw(g);
 		}
 		
-		for(int i = 0; i < enemies.size(); i++) {
-			enemies.get(i).draw(g);
+		if(dbox2 != null && !dbox2.shouldRemove()){
+			dbox2.draw(g);
 		}
 		
 		try{

@@ -28,13 +28,15 @@ public class Level0State extends GameState{
 	private DialogBox[] dialog = {
 			new DialogBox("Greetings Player! Welcome to GLITCH!", 2), 
 			new DialogBox("Use the right and left arrow keys to move.", 2), 
-			new DialogBox("Use [Z] to jump!", 2)}; 
+			new DialogBox("Use Z to jump!", 2)}; 
 	private int index;
 	private int index2 = 0;
 	private boolean keyPressed;
 	private boolean talking;
 	private boolean pauseKeyPressed;
 	private boolean introduced = false;
+	
+	public static boolean playedOnce = false;
 	
 	public Level0State(GameStateManager gsm){
 		super(gsm);
@@ -49,17 +51,17 @@ public class Level0State extends GameState{
 	public void init() {
 		//initialize tile map
 		tileMap = new TileMap(16);
-		tileMap.loadTiles("/Tilesets/texttileset.png");
+		tileMap.loadTiles("/Tilesets/tileset.png");
 		tileMap.loadMap("/Maps/intro.map");
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
 		
-		bg = new Background("/Backgrounds/level1bg.png", 0.1);
+		bg = new Background("/Backgrounds/gamebg.png", 0.1);
 		player = new TextPlayer(tileMap);
 		//player.setSpawnPoint(489, 55);
 		//player.setPosition(489, 55);
-		player.setSpawnPoint(32, 205);
-		player.setPosition(32, 205);
+		player.setSpawnPoint(280, 206);
+		player.setPosition(280, 206);
 		//hud = new HUD(player);
 		
 		
@@ -83,21 +85,24 @@ public class Level0State extends GameState{
 	}
 
 	public void update() {
-		// check keys
 		
 		printDialogue();
 		if(!talking){
 			handleInput();
 			player.update();
 			
-			if(player.getx() < 186 && player.gety() < 60){
+			if(player.getx() < 205 && player.gety() < 75){
 				if(dbox1 == null){
-					dbox1 = new DialogBox("See that red star? Collect it for points!", 2);
+					dbox1 = new DialogBox("See that cat? You should try petting it!", 2);
 					talking = true;
 				}
 			}
 			
-			if(player.getHealth() <= 0){
+			if(player.getHealth() <= 0 && !playedOnce){
+				JukeBox.stopAll();
+			}
+			
+			if(playedOnce){
 				gsm.setState(GameStateManager.LEVEL1STATE);
 			}
 			

@@ -61,9 +61,11 @@ public class TileMap {
 			BufferedImage subimage;
 			for(int col = 0; col < numTilesAcross; col++){
 				subimage = tileset.getSubimage(col * tileSize, 0, tileSize, tileSize);
-				if(s.equals("/Tilesets/texttileset.png")){
+				if(s.equals("/Tilesets/texttileset.png") || s.equals("/Tilesets/tileset.png")){
 					if(col == 4){
 						tiles[0][col] = new Tile(subimage, Tile.TERMINAL);
+					}else if(col == 3){
+						tiles[0][col] = new Tile(subimage, Tile.DAMAGING);
 					}else{
 						tiles[0][col] = new Tile(subimage, Tile.NORMAL);
 					}
@@ -71,7 +73,7 @@ public class TileMap {
 					tiles[0][col] = new Tile(subimage, Tile.NORMAL);
 				}
 				subimage = tileset.getSubimage(col * tileSize, tileSize, tileSize, tileSize);
-				if(s.equals("/Tilesets/texttileset.png")){
+				if(s.equals("/Tilesets/texttileset.png") || s.equals("/Tilesets/tileset.png")){
 					if(col == 3){
 						tiles[1][col] = new Tile(subimage, Tile.DAMAGING);
 					}else if(col == 4){
