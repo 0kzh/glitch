@@ -42,6 +42,9 @@ public class TileMap {
 	private int numRowsToDraw;
 	private int numColsToDraw;
 	
+	private boolean shaking;
+	private int intensity;
+	
 	public TileMap(int tileSize){
 		this.tileSize = tileSize;
 		numRowsToDraw = GamePanel.HEIGHT / tileSize + 2;
@@ -74,7 +77,9 @@ public class TileMap {
 				}
 				subimage = tileset.getSubimage(col * tileSize, tileSize, tileSize, tileSize);
 				if(s.equals("/Tilesets/texttileset.png") || s.equals("/Tilesets/tileset.png")){
-					if(col == 3){
+					if(col == 2){
+						tiles[1][col] = new Tile(subimage, Tile.BOUNCY);
+					}else if(col == 3){
 						tiles[1][col] = new Tile(subimage, Tile.DAMAGING);
 					}else if(col == 4){
 						tiles[1][col] = new Tile(subimage, Tile.PLATFORM);
@@ -95,7 +100,7 @@ public class TileMap {
 	public void loadMap(String s){
 		
 		try{
-			
+			System.out.println(s);
 			InputStream in = getClass().getResourceAsStream(s);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			
@@ -134,6 +139,7 @@ public class TileMap {
 	public int getNumRows() { return numRows; }
 	public int getNumCols() { return numCols; }
 	public boolean isLoaded() { return loaded; }
+	public boolean isShaking() { return shaking; }
 	
 	public int getType(int row, int col){
 		int rc = map[row][col];
@@ -151,6 +157,11 @@ public class TileMap {
 		this.tween = t;
 	}
 	
+	public void setShaking(boolean b, int i) { 
+		shaking = b;
+		intensity = i; 
+	}
+	
 	public void setPosition(double x, double y){
 		
 		
@@ -164,11 +175,18 @@ public class TileMap {
 		
 	}
 	
-	private void fixBounds(){
+	public void fixBounds(){
 		if(x < xmin) x = xmin;
 		if(y < ymin) y = ymin;
 		if(x > xmax) x = xmax;
 		if(y > ymax) y = ymax;
+	}
+	
+	public void update(){
+		if(shaking) {
+			this.x += Math.random() * intensity - intensity / 2;
+			this.y += Math.random() * intensity - intensity / 2;
+		}
 	}
 	
 	public void draw(Graphics2D g){
@@ -185,7 +203,6 @@ public class TileMap {
 				int c = rc % numTilesAcross;
 				
 				g.drawImage(tiles[r][c].getImage(), (int)x + col * tileSize, (int)y + row * tileSize, null);
-			
 			}
 		}
 	}

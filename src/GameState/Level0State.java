@@ -98,16 +98,20 @@ public class Level0State extends GameState{
 				}
 			}
 			
-			if(player.getHealth() <= 0 && !playedOnce){
-				JukeBox.stopAll();
+			if(player.tl == Tile.DAMAGING || player.tr == Tile.DAMAGING || player.bl == Tile.DAMAGING || player.br == Tile.DAMAGING){
+				JukeBox.stop("intro");
 			}
 			
 			if(playedOnce){
 				gsm.setState(GameStateManager.LEVEL1STATE);
 			}
 			
-			tileMap.setPosition(GamePanel.WIDTH / 2 - player.getx(), GamePanel.HEIGHT / 2 - player.gety());
-			
+			tileMap.setPosition(
+					GamePanel.WIDTH / 2 - player.getx(),
+					GamePanel.HEIGHT / 2 - player.gety()
+				);
+			tileMap.update();
+			tileMap.fixBounds();
 			
 			bg.setPosition(tileMap.getx(), tileMap.gety());
 		}

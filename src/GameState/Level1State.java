@@ -52,7 +52,7 @@ public class Level1State extends GameState{
 		//initialize tile map
 		tileMap = new TileMap(16);
 		tileMap.loadTiles("/Tilesets/texttileset.png");
-		tileMap.loadMap("/Maps/level1-1.map");
+		tileMap.loadMap("/Maps/level1.map");
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
 		
@@ -60,8 +60,8 @@ public class Level1State extends GameState{
 		player = new TextPlayer(tileMap);
 		//player.setSpawnPoint(489, 55);
 		//player.setPosition(489, 55);
-		player.setSpawnPoint(55, 63);
-		player.setPosition(55, 63);
+		player.setSpawnPoint(55, 88);
+		player.setPosition(55, 88);
 		//hud = new HUD(player);
 		
 		JukeBox.stopAll();
@@ -77,7 +77,16 @@ public class Level1State extends GameState{
 			JukeBox.stop("level1");
 			talking = true;
 		}else{
-			fs.setRemove(true);
+			if(!fs.shouldRemove()){
+				try {
+					Thread.sleep(1000);
+					dbox = new DialogBox("...", 1);
+					talking = true;
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				fs.setRemove(true);
+			}
 			if(dbox2 == null) talking = false;
 		}
 		
@@ -87,7 +96,7 @@ public class Level1State extends GameState{
 		// check keys
 		
 		printDialogue();
-		if(!talking){
+		if(!talking && JukeBox.isPlaying("level1")){
 			if(console == null){
 				handleInput();
 				player.update();
@@ -100,23 +109,16 @@ public class Level1State extends GameState{
 				}
 			}
 			
-			if(Keys.isPressed(Keys.BUTTON1)){
-				if(player.tl == Tile.TERMINAL || player.tr == Tile.TERMINAL || player.bl == Tile.TERMINAL || player.br == Tile.TERMINAL){
-					if(console == null){
-						console = new Console(1);
-					}else{
-						if(dbox1 == null){
-							dbox1 = new DialogBox("I'm... a glitch?", 1);
-						}
-						if(dbox1.isDone()){
-							dbox1.setRemove(true);
-							gsm.setState(GameStateManager.LEVEL2STATE);
-						}
-					}
-				}
+			if(player.tl == Tile.TERMINAL || player.tr == Tile.TERMINAL || player.bl == Tile.TERMINAL || player.br == Tile.TERMINAL){
+				gsm.setState(GameStateManager.LEVEL2STATE);
 			}
-			tileMap.setPosition(GamePanel.WIDTH / 2 - player.getx(), GamePanel.HEIGHT / 2 - player.gety());
 			
+			tileMap.setPosition(
+					GamePanel.WIDTH / 2 - player.getx(),
+					GamePanel.HEIGHT / 2 - player.gety()
+				);
+			tileMap.update();
+			tileMap.fixBounds();
 			
 			bg.setPosition(tileMap.getx(), tileMap.gety());
 		}
@@ -163,10 +165,12 @@ public class Level1State extends GameState{
 				fs.draw(g);
 			}else{
 				if(index2 < 30){
+					g.setColor(Color.BLACK);
 					g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT / 2 - (index2 * GamePanel.HEIGHT / 60));
 					g.fillRect(0, GamePanel.HEIGHT / 2 + (index2 * GamePanel.HEIGHT / 60), GamePanel.WIDTH, GamePanel.HEIGHT / 2);
 					Thread.sleep(10);
 					index2++;
+				
 				}else{
 					JukeBox.resume("level1", true);
 				}

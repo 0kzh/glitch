@@ -4,6 +4,7 @@ import TileMap.*;
 
 import java.util.ArrayList;
 import Audio.JukeBox;
+import GameState.GameStateManager;
 import GameState.Level0State;
 import Handlers.Keys;
 
@@ -19,6 +20,10 @@ public class TextPlayer extends MapObject{
 	public boolean dead;
 	private int spawnX;
 	private int spawnY;
+	
+	private boolean wallJump;
+	public boolean alreadyWallJump;
+	private double wallJumpStart;
 	
 	// animations
 	private ArrayList<BufferedImage[]> sprites;
@@ -50,6 +55,7 @@ public class TextPlayer extends MapObject{
 		maxFallSpeed = 4.0;
 		jumpStart = -4.6;
 		stopJumpSpeed = 0.2;
+		wallJumpStart = -4.5;
 		
 		facingRight = true;
 		
@@ -95,6 +101,9 @@ public class TextPlayer extends MapObject{
 	}
 	
 	public void setJumping(boolean b) {
+		if(b && !jumping && falling && !alreadyWallJump && ((bl == Tile.BOUNCY || br == Tile.BOUNCY) || (bl == Tile.BOUNCY || br == Tile.BOUNCY))) {
+			wallJump = true;
+		}
 		jumping = b;
 	}
 	
@@ -154,6 +163,18 @@ public class TextPlayer extends MapObject{
 			falling = true;
 		}
 		
+		//wall jump
+		if(wallJump) {
+			dy = wallJumpStart;
+			if(facingRight){
+				dx = -3;
+			}else{
+				dx = 3;
+			}
+			alreadyWallJump = true;
+			wallJump = false;
+			JukeBox.play("jump");
+		}
 		
 		if(falling){
 			dy += fallSpeed;
@@ -161,6 +182,8 @@ public class TextPlayer extends MapObject{
 			if(dy > 0) jumping = false;
 			if(dy < 0 && !jumping) dy += stopJumpSpeed;
 			if(dy > maxFallSpeed) dy = maxFallSpeed;
+		}else{
+			alreadyWallJump = false;
 		}
 		
 	}
@@ -200,6 +223,7 @@ public class TextPlayer extends MapObject{
 		if(health <= 0){
 			if(currentAction != DEAD){
 				currentAction = DEAD;
+				tileMap.setShaking(true, 7);
 				animation.setFrames(sprites.get(DEAD));
 				animation.setDelay(100);
 				width = 16;
@@ -207,6 +231,7 @@ public class TextPlayer extends MapObject{
 			}
 			if(animation.hasPlayedOnce()){
 				Level0State.playedOnce = true;
+				tileMap.setShaking(false, 0);
 				respawn();
 			}else{
 				dx = 0;
