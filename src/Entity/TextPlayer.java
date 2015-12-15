@@ -21,6 +21,7 @@ public class TextPlayer extends MapObject{
 	private int spawnX;
 	private int spawnY;
 	
+	public boolean dboxFinish;
 	private boolean wallJump;
 	public boolean alreadyWallJump;
 	private double wallJumpStart;
@@ -101,10 +102,16 @@ public class TextPlayer extends MapObject{
 	}
 	
 	public void setJumping(boolean b) {
-		if(b && !jumping && falling && !alreadyWallJump && ((bl == Tile.BOUNCY || br == Tile.BOUNCY) || (bl == Tile.BOUNCY || br == Tile.BOUNCY))) {
-			wallJump = true;
+		if(!dboxFinish){
+			if(b && !jumping && falling && !alreadyWallJump && ((bl == Tile.BOUNCY || br == Tile.BOUNCY) || (bl == Tile.BOUNCY || br == Tile.BOUNCY))) {
+				wallJump = true;
+			}
+			if(x > 0 && y > 0 && x < tileMap.getWidth() && y < tileMap.getHeight()){
+				if(tileMap.getType((int) y / tileSize - 1, (int) (x) / tileSize) != Tile.BLOCKED){
+					jumping = b;
+				}
+			}
 		}
-		jumping = b;
 	}
 	
 	public void checkAttack(ArrayList<Enemy> enemies){

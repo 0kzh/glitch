@@ -37,6 +37,7 @@ public class Level1State extends GameState{
 	private boolean talking;
 	private boolean pauseKeyPressed;
 	private boolean introduced = false;
+	private long timePassed;
 	
 	public Level1State(GameStateManager gsm){
 		super(gsm);
@@ -60,8 +61,8 @@ public class Level1State extends GameState{
 		player = new TextPlayer(tileMap);
 		//player.setSpawnPoint(489, 55);
 		//player.setPosition(489, 55);
-		player.setSpawnPoint(55, 88);
-		player.setPosition(55, 88);
+		player.setSpawnPoint(41, 212);
+		player.setPosition(41, 212);
 		//hud = new HUD(player);
 		
 		JukeBox.stopAll();
@@ -87,7 +88,7 @@ public class Level1State extends GameState{
 				}
 				fs.setRemove(true);
 			}
-			if(dbox2 == null) talking = false;
+			if(dbox2 == null && dbox.shouldRemove()) talking = false;
 		}
 		
 	}
@@ -96,13 +97,17 @@ public class Level1State extends GameState{
 		// check keys
 		
 		printDialogue();
+		
+		long elapsed = (System.nanoTime() - timePassed) / 1000000;
+		if(elapsed > 500) player.dboxFinish = false;
+		
 		if(!talking && JukeBox.isPlaying("level1")){
 			if(console == null){
 				handleInput();
 				player.update();
 			}
 			
-			if(player.getx() > 185 && player.gety() < 90){
+			if(player.getx() > 145 && player.gety() > 172){
 				if(dbox2 == null){
 					dbox2 = new DialogBox("Where am I?", 1);
 					talking = true;
@@ -121,6 +126,9 @@ public class Level1State extends GameState{
 			tileMap.fixBounds();
 			
 			bg.setPosition(tileMap.getx(), tileMap.gety());
+		}else{
+			player.dboxFinish = true;
+			timePassed = System.nanoTime();
 		}
 		
 		if(Keys.isPressed(Keys.BUTTON1)){
@@ -180,6 +188,7 @@ public class Level1State extends GameState{
 				dbox.draw(g);
 				if(Keys.isPressed(Keys.BUTTON1) && !keyPressed && dbox.isDone()){
 					dbox.setRemove(true);
+					
 					keyPressed = true;
 				}else if(!Keys.isPressed(Keys.BUTTON1)){
 					keyPressed = false;
@@ -211,7 +220,5 @@ public class Level1State extends GameState{
 		player.setRight(Keys.keyState[Keys.RIGHT]);
 		player.setJumping(Keys.keyState[Keys.BUTTON1]);
 	}
-
-	
 	
 }

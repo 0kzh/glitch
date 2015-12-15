@@ -35,7 +35,7 @@ public class Level0State extends GameState{
 	private boolean talking;
 	private boolean pauseKeyPressed;
 	private boolean introduced = false;
-	
+	private long timePassed;
 	public static boolean playedOnce = false;
 	
 	public Level0State(GameStateManager gsm){
@@ -87,6 +87,10 @@ public class Level0State extends GameState{
 	public void update() {
 		
 		printDialogue();
+		
+		long elapsed = (System.nanoTime() - timePassed) / 1000000;
+		if(elapsed > 500) player.dboxFinish = false;
+		
 		if(!talking){
 			handleInput();
 			player.update();
@@ -114,6 +118,9 @@ public class Level0State extends GameState{
 			tileMap.fixBounds();
 			
 			bg.setPosition(tileMap.getx(), tileMap.gety());
+		}else{
+			player.dboxFinish = true;
+			timePassed = System.nanoTime();
 		}
 		
 		if(Keys.isPressed(Keys.BUTTON1)){
@@ -152,6 +159,7 @@ public class Level0State extends GameState{
 			if(!fs.shouldRemove()){
 				fs.draw(g);
 			}else{
+				
 				if(index2 < 30){
 					g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT / 2 - (index2 * GamePanel.HEIGHT / 60));
 					g.fillRect(0, GamePanel.HEIGHT / 2 + (index2 * GamePanel.HEIGHT / 60), GamePanel.WIDTH, GamePanel.HEIGHT / 2);
@@ -159,6 +167,7 @@ public class Level0State extends GameState{
 					index2++;
 				}else{
 					JukeBox.resume("intro", true);
+					
 				}
 			}
 			

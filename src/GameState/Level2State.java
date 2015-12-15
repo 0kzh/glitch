@@ -21,16 +21,21 @@ public class Level2State extends GameState{
 	private Console console;
 	private FillScreen fs;
 	private DialogBox dbox;
+	private DialogBox dbox2;
 	private DialogBox dbox1;
 	private TextPlayer player;
 	
-	private ArrayList<Enemy> enemies;
-	//private ArrayList<Explosion> explosions; 
-	private DialogBox[] dialog = {new DialogBox("...", 1), new DialogBox("Where am I?", 1), new DialogBox("Welcome to the Matrix.", 2), new DialogBox("... What?", 1), new DialogBox("It is where deleted objects go.", 2)}; 
+	private DialogBox[] dialog = {
+			new DialogBox("Hmm...", 2, true), 
+			new DialogBox("Perhaps that was a bit too easy.", 2), 
+			new DialogBox("Let's make things more... interesting.", 2)};
 	private int index;
 	private int index2 = 0;
 	private boolean keyPressed;
+	private boolean talking;
 	private boolean pauseKeyPressed;
+	private boolean introduced = false;
+	private long timePassed;
 	
 	public Level2State(GameStateManager gsm){
 		super(gsm);
@@ -46,41 +51,43 @@ public class Level2State extends GameState{
 		//initialize tile map
 		tileMap = new TileMap(16);
 		tileMap.loadTiles("/Tilesets/texttileset.png");
-		tileMap.loadMap("/Maps/level1-2.map");
+		tileMap.loadMap("/Maps/level2.map");
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
 		
 		bg = new Background("/Backgrounds/level1bg.png", 0.1);
-		populateEnemies();
 		player = new TextPlayer(tileMap);
-		player.setSpawnPoint(19, 365);
-		player.setPosition(19, 365);
-		//player.setSpawnPoint(476, 40);
-		//player.setPosition(476, 40);
+		//player.setSpawnPoint(489, 55);
+		//player.setPosition(489, 55);
+		player.setSpawnPoint(39, 55);
+		player.setPosition(39, 55);
 		//hud = new HUD(player);
 		
-		
+		JukeBox.stopAll();
 		JukeBox.load("/Music/level1-1.mp3", "level1");
-		//JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
-		if(!JukeBox.isPlaying("level1")){
-			JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
-		}
+		JukeBox.load("/SFX/press.mp3", "press");
+		JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
 		
 	}
 	
-	private void populateEnemies() {
-		
-		enemies = new ArrayList<Enemy>();
-		
-		Slugger s;
-		Point[] points = new Point[] {
-			new Point(163, 402),
-			new Point(177, 131)
-		};
-		for(int i = 0; i < points.length; i++) {
-			s = new Slugger(tileMap);
-			s.setPosition(points[i].x, points[i].y);
-			enemies.add(s);
+	private void printDialogue() {
+		if(index < dialog.length){
+			fs = new FillScreen(Color.BLACK);
+			dbox = dialog[index];
+			JukeBox.stop("level1");
+			talking = true;
+		}else{
+			if(!fs.shouldRemove()){
+				try {
+					Thread.sleep(1000);
+					dbox = new DialogBox("...", 1);
+					talking = true;
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				fs.setRemove(true);
+			}
+			if(dbox2 == null && dbox.shouldRemove()) talking = false;
 		}
 		
 	}
@@ -88,41 +95,50 @@ public class Level2State extends GameState{
 	public void update() {
 		// check keys
 		
-		//printDialogue();
+		printDialogue();
 		
-		if(console == null){
-			handleInput();
-			player.update();
+		long elapsed = (System.nanoTime() - timePassed) / 1000000;
+		if(elapsed > 500) player.dboxFinish = false;
+		
+		if(!talking && JukeBox.isPlaying("level1")){
+			if(console == null){
+				handleInput();
+				player.update();
+			}
 			
+			if(player.getx() > 145 && player.gety() > 172){
+				if(dbox2 == null){
+					dbox2 = new DialogBox("Where am I?", 1);
+					talking = true;
+				}
+			}
+			
+			if(player.tl == Tile.TERMINAL || player.tr == Tile.TERMINAL || player.bl == Tile.TERMINAL || player.br == Tile.TERMINAL){
+				gsm.setState(GameStateManager.LEVEL2STATE);
+			}
+			
+			tileMap.setPosition(
+					GamePanel.WIDTH / 2 - player.getx(),
+					GamePanel.HEIGHT / 2 - player.gety()
+				);
+			tileMap.update();
+			tileMap.fixBounds();
+			
+			bg.setPosition(tileMap.getx(), tileMap.gety());
+		}else{
+			player.dboxFinish = true;
+			timePassed = System.nanoTime();
 		}
 		
 		if(Keys.isPressed(Keys.BUTTON1)){
-			if(player.tl == Tile.TERMINAL || player.tr == Tile.TERMINAL || player.bl == Tile.TERMINAL || player.br == Tile.TERMINAL){
-				if(console == null){
-					console = new Console(2);
-				}else{
-					if(dbox1 == null){
-						
-						dbox1 = new DialogBox("Wut lol", 1);
-					}
-					if(dbox1.isDone()){
-						gsm.setState(GameStateManager.LEVEL3STATE);
-					}
+			if(dbox2 != null && !introduced){
+				if(dbox2.isDone()){
+					dbox2.setRemove(true);
+					introduced = true;
+					talking = false;
 				}
 			}
 		}
-		tileMap.setPosition(GamePanel.WIDTH / 2 - player.getx(), GamePanel.HEIGHT / 2 - player.gety());
-		
-		
-		bg.setPosition(tileMap.getx(), tileMap.gety());
-		
-		for(int i = 0; i < enemies.size(); i++) {
-			Enemy e = enemies.get(i);
-			e.update();
-		}
-		
-		// attack enemies
-		player.checkAttack(enemies);
 		
 		
 	}
@@ -138,19 +154,43 @@ public class Level2State extends GameState{
 		
 		//draw player
 		player.draw(g);
-		for(int i = 0; i < enemies.size(); i++) {
-			enemies.get(i).draw(g);
-		}
 		
 		if(console != null) console.draw(g);
 		//draw hud
 		//hud.draw(g);
+		
+		if(dbox1 != null && !dbox1.shouldRemove()){
+			dbox1.draw(g);
+		}
+		
+		if(dbox2 != null && !dbox2.shouldRemove()){
+			dbox2.draw(g);
+		}
+		
 		try{
-			if(!dbox1.shouldRemove() && dbox1 != null){
-				dbox1.draw(g);
-				if(Keys.isPressed(Keys.BUTTON1) && dbox1.isDone()){
-					dbox1.setRemove(true);
+			if(!fs.shouldRemove()){
+				fs.draw(g);
+			}else{
+				if(index2 < 30){
+					g.setColor(Color.BLACK);
+					g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT / 2 - (index2 * GamePanel.HEIGHT / 60));
+					g.fillRect(0, GamePanel.HEIGHT / 2 + (index2 * GamePanel.HEIGHT / 60), GamePanel.WIDTH, GamePanel.HEIGHT / 2);
+					Thread.sleep(10);
+					index2++;
+				
+				}else{
+					JukeBox.resume("level1", true);
+				}
+			}
+			
+			if(!dbox.shouldRemove()){
+				dbox.draw(g);
+				if(Keys.isPressed(Keys.BUTTON1) && !keyPressed && dbox.isDone()){
+					dbox.setRemove(true);
+					
+					keyPressed = true;
 				}else if(!Keys.isPressed(Keys.BUTTON1)){
+					keyPressed = false;
 				}
 			}
 			else if(index < dialog.length){
@@ -161,6 +201,7 @@ public class Level2State extends GameState{
 	}
 	
 	public void handleInput() {
+		
 		if(Keys.isPressed(Keys.ESCAPE)){
 			if(!pauseKeyPressed){
 				gsm.setPaused(true);
@@ -169,6 +210,8 @@ public class Level2State extends GameState{
 		}else{
 			pauseKeyPressed = false;
 		}
+			
+		
 		if(player.getHealth() == 0) return;
 		player.setUp(Keys.keyState[Keys.UP]);
 		player.setLeft(Keys.keyState[Keys.LEFT]);
@@ -176,7 +219,5 @@ public class Level2State extends GameState{
 		player.setRight(Keys.keyState[Keys.RIGHT]);
 		player.setJumping(Keys.keyState[Keys.BUTTON1]);
 	}
-
-	
 	
 }
