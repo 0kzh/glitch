@@ -21,12 +21,11 @@ public class Level2State extends GameState{
 	private Console console;
 	private FillScreen fs;
 	private DialogBox dbox;
-	private DialogBox dbox2;
 	private DialogBox dbox1;
 	private TextPlayer player;
 	
 	private DialogBox[] dialog = {
-			new DialogBox("Hmm...", 2, true), 
+			new DialogBox("Hmm...", 2), 
 			new DialogBox("Perhaps that was a bit too easy.", 2), 
 			new DialogBox("Let's make things more... interesting.", 2)};
 	private int index;
@@ -59,14 +58,16 @@ public class Level2State extends GameState{
 		player = new TextPlayer(tileMap);
 		//player.setSpawnPoint(489, 55);
 		//player.setPosition(489, 55);
-		player.setSpawnPoint(39, 55);
-		player.setPosition(39, 55);
+		player.setSpawnPoint(39, 215);
+		player.setPosition(39, 215);
 		//hud = new HUD(player);
 		
 		JukeBox.stopAll();
-		JukeBox.load("/Music/level1-1.mp3", "level1");
+		
+		JukeBox.load("/Music/bg.mp3", "bg");
 		JukeBox.load("/SFX/press.mp3", "press");
-		JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
+		JukeBox.load("/SFX/level.mp3", "next");
+		JukeBox.loop("bg", 600, JukeBox.getFrames("bg") - 2200);
 		
 	}
 	
@@ -74,20 +75,13 @@ public class Level2State extends GameState{
 		if(index < dialog.length){
 			fs = new FillScreen(Color.BLACK);
 			dbox = dialog[index];
-			JukeBox.stop("level1");
+			JukeBox.stop("bg");
 			talking = true;
 		}else{
 			if(!fs.shouldRemove()){
-				try {
-					Thread.sleep(1000);
-					dbox = new DialogBox("...", 1);
-					talking = true;
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 				fs.setRemove(true);
 			}
-			if(dbox2 == null && dbox.shouldRemove()) talking = false;
+			if(dbox.shouldRemove()) talking = false;
 		}
 		
 	}
@@ -100,21 +94,15 @@ public class Level2State extends GameState{
 		long elapsed = (System.nanoTime() - timePassed) / 1000000;
 		if(elapsed > 500) player.dboxFinish = false;
 		
-		if(!talking && JukeBox.isPlaying("level1")){
+		if(!talking && JukeBox.isPlaying("bg")){
 			if(console == null){
 				handleInput();
 				player.update();
 			}
 			
-			if(player.getx() > 145 && player.gety() > 172){
-				if(dbox2 == null){
-					dbox2 = new DialogBox("Where am I?", 1);
-					talking = true;
-				}
-			}
-			
 			if(player.tl == Tile.TERMINAL || player.tr == Tile.TERMINAL || player.bl == Tile.TERMINAL || player.br == Tile.TERMINAL){
-				gsm.setState(GameStateManager.LEVEL2STATE);
+				JukeBox.play("next");
+				gsm.setState(GameStateManager.LEVEL3STATE);
 			}
 			
 			tileMap.setPosition(
@@ -128,16 +116,6 @@ public class Level2State extends GameState{
 		}else{
 			player.dboxFinish = true;
 			timePassed = System.nanoTime();
-		}
-		
-		if(Keys.isPressed(Keys.BUTTON1)){
-			if(dbox2 != null && !introduced){
-				if(dbox2.isDone()){
-					dbox2.setRemove(true);
-					introduced = true;
-					talking = false;
-				}
-			}
 		}
 		
 		
@@ -163,10 +141,6 @@ public class Level2State extends GameState{
 			dbox1.draw(g);
 		}
 		
-		if(dbox2 != null && !dbox2.shouldRemove()){
-			dbox2.draw(g);
-		}
-		
 		try{
 			if(!fs.shouldRemove()){
 				fs.draw(g);
@@ -179,7 +153,7 @@ public class Level2State extends GameState{
 					index2++;
 				
 				}else{
-					JukeBox.resume("level1", true);
+					JukeBox.resume("bg", true);
 				}
 			}
 			

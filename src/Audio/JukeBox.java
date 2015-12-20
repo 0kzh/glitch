@@ -6,6 +6,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 
 public class JukeBox {
 	
@@ -40,6 +41,7 @@ public class JukeBox {
 			clip = AudioSystem.getClip();
 			clip.open(dais);
 			clips.put(n, clip);
+			
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -77,7 +79,11 @@ public class JukeBox {
 	
 	public static void stop(String s) {
 		if(clips.get(s) == null) return;
-		if(clips.get(s).isRunning()) clips.get(s).stop();
+		if(clips.get(s).isRunning()){
+			clips.get(s).stop();
+			clips.get(s).setFramePosition(clips.get(s).getFramePosition());
+		}
+		
 	}
 	
 	public static void stopAll(){
@@ -91,7 +97,7 @@ public class JukeBox {
 		if(clips.get(s).isRunning()) return;
 		clips.get(s).start();
 		if(b){
-			loop(s, 600, clips.get(s).getFrameLength() -  2200);
+			loop(s, clips.get(s).getFramePosition(), 600, clips.get(s).getFrameLength() -  2200);
 		}
 	}
 	

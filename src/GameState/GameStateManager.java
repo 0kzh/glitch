@@ -95,10 +95,18 @@ public class GameStateManager {
 		pauseState.pauseButton = true; 
 		JukeBox.play("pause");
 		
-		if(b){
-			JukeBox.stop("level1");
+		if(currentState == LEVEL1STATE){
+			if(b){
+				JukeBox.stop("level1");
+			}else{
+				JukeBox.resume("level1", true);
+			}
 		}else{
-			JukeBox.resume("level1", true);
+			if(b){
+				JukeBox.stop("bg");
+			}else{
+				JukeBox.resume("bg", true);
+			}
 		}
 	}
 	

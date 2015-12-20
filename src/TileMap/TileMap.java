@@ -6,6 +6,7 @@ import java.awt.image.*;
 import java.io.*;
 import javax.imageio.ImageIO;
 
+import Entity.FillScreen;
 import Main.GamePanel;
 
 public class TileMap {
@@ -44,6 +45,7 @@ public class TileMap {
 	
 	private boolean shaking;
 	private int intensity;
+	public static FillScreen fs;
 	
 	public TileMap(int tileSize){
 		this.tileSize = tileSize;
@@ -77,9 +79,7 @@ public class TileMap {
 				}
 				subimage = tileset.getSubimage(col * tileSize, tileSize, tileSize, tileSize);
 				if(s.equals("/Tilesets/texttileset.png") || s.equals("/Tilesets/tileset.png")){
-					if(col == 2){
-						tiles[1][col] = new Tile(subimage, Tile.BOUNCY);
-					}else if(col == 3){
+					if(col == 3){
 						tiles[1][col] = new Tile(subimage, Tile.DAMAGING);
 					}else if(col == 4){
 						tiles[1][col] = new Tile(subimage, Tile.PLATFORM);
@@ -100,7 +100,6 @@ public class TileMap {
 	public void loadMap(String s){
 		
 		try{
-			System.out.println(s);
 			InputStream in = getClass().getResourceAsStream(s);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			
@@ -184,8 +183,16 @@ public class TileMap {
 	
 	public void update(){
 		if(shaking) {
+			//fs = new FillScreen(Color.WHITE);
+			
 			this.x += Math.random() * intensity - intensity / 2;
 			this.y += Math.random() * intensity - intensity / 2;
+			
+		}else{
+			/*
+			if(fs != null){
+				if(!fs.shouldRemove()) fs.setRemove(true);
+			}*/
 		}
 	}
 	
@@ -204,6 +211,9 @@ public class TileMap {
 				
 				g.drawImage(tiles[r][c].getImage(), (int)x + col * tileSize, (int)y + row * tileSize, null);
 			}
+		}
+		if(fs != null){
+			if(!fs.shouldRemove()) fs.draw(g);
 		}
 	}
 }

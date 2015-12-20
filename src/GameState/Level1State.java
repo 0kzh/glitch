@@ -68,6 +68,7 @@ public class Level1State extends GameState{
 		JukeBox.stopAll();
 		JukeBox.load("/Music/level1-1.mp3", "level1");
 		JukeBox.load("/SFX/press.mp3", "press");
+		JukeBox.load("/SFX/level.mp3", "next");
 		JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
 		
 	}
@@ -107,7 +108,7 @@ public class Level1State extends GameState{
 				player.update();
 			}
 			
-			if(player.getx() > 145 && player.gety() > 172){
+			if(player.getx() > 190 && player.gety() > 172){
 				if(dbox2 == null){
 					dbox2 = new DialogBox("Where am I?", 1);
 					talking = true;
@@ -115,7 +116,10 @@ public class Level1State extends GameState{
 			}
 			
 			if(player.tl == Tile.TERMINAL || player.tr == Tile.TERMINAL || player.bl == Tile.TERMINAL || player.br == Tile.TERMINAL){
-				gsm.setState(GameStateManager.LEVEL2STATE);
+				if(player.teleported){
+					gsm.setState(GameStateManager.LEVEL2STATE);
+					player.teleported = false;
+				}	
 			}
 			
 			tileMap.setPosition(

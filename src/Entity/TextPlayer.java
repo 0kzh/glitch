@@ -24,12 +24,13 @@ public class TextPlayer extends MapObject{
 	public boolean dboxFinish;
 	private boolean wallJump;
 	public boolean alreadyWallJump;
+	public static boolean teleported;
 	private double wallJumpStart;
 	
 	// animations
 	private ArrayList<BufferedImage[]> sprites;
 	private final int[] numFrames = {
-			6, 6, 1, 1, 6
+			6, 6, 1, 1, 6, 6
 	};
 	
 	// animation actions
@@ -38,6 +39,7 @@ public class TextPlayer extends MapObject{
 	private static final int JUMPING = 2;
 	private static final int FALLING = 3;
 	private static final int DEAD = 4;
+	private static final int TELEPORTING = 5;
 	
 	
 	public TextPlayer(TileMap tm){
@@ -46,7 +48,7 @@ public class TextPlayer extends MapObject{
 		
 		width = 16;
 		height = 16;
-		cwidth = 10;
+		cwidth = 8;
 		cheight = 14;
 		
 		moveSpeed = 0.3;
@@ -54,9 +56,9 @@ public class TextPlayer extends MapObject{
 		stopSpeed = 0.4;
 		fallSpeed = 0.15;
 		maxFallSpeed = 4.0;
-		jumpStart = -4.6;
+		jumpStart = -4;
 		stopJumpSpeed = 0.2;
-		wallJumpStart = -4.5;
+		wallJumpStart = -4;
 		
 		facingRight = true;
 		
@@ -67,7 +69,7 @@ public class TextPlayer extends MapObject{
 			BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/playersprites.png"));
 			
 			sprites = new ArrayList<BufferedImage[]>();
-			for(int i = 0; i < 5; i ++) {
+			for(int i = 0; i < 6; i ++) {
 				BufferedImage[] bi = new BufferedImage[numFrames[i]];
 				for(int j = 0; j < numFrames[i]; j++){
 					
@@ -103,7 +105,7 @@ public class TextPlayer extends MapObject{
 	
 	public void setJumping(boolean b) {
 		if(!dboxFinish){
-			if(b && !jumping && falling && !alreadyWallJump && ((bl == Tile.BOUNCY || br == Tile.BOUNCY) || (bl == Tile.BOUNCY || br == Tile.BOUNCY))) {
+			if(b && !jumping && falling && !alreadyWallJump && (tr == Tile.BLOCKED || tl == Tile.BLOCKED)) {
 				wallJump = true;
 			}
 			if(x > 0 && y > 0 && x < tileMap.getWidth() && y < tileMap.getHeight()){
@@ -224,25 +226,43 @@ public class TextPlayer extends MapObject{
 		}
 		
 		// update position
-		getNextPosition();
-		checkTileMapCollision();
-		setPosition(xtemp, ytemp);
+		if(currentAction != TELEPORTING){
+			getNextPosition();
+			checkTileMapCollision();
+			setPosition(xtemp, ytemp);
+		}
 		if(health <= 0){
 			if(currentAction != DEAD){
 				currentAction = DEAD;
-				tileMap.setShaking(true, 7);
+				tileMap.setShaking(true, 10);
 				animation.setFrames(sprites.get(DEAD));
 				animation.setDelay(100);
 				width = 16;
 				JukeBox.play("dead");
+				if(tileMap.fs != null){
+					if(!tileMap.fs.shouldRemove()) tileMap.fs.setRemove(true);
+				}
 			}
-			if(animation.hasPlayedOnce()){
+			if(animation.getFrame() >= 5){
 				Level0State.playedOnce = true;
 				tileMap.setShaking(false, 0);
 				respawn();
 			}else{
 				dx = 0;
 				dy = 0;
+			}
+		}else if(x > 0 && y > 0 && x < tileMap.getWidth() && y < tileMap.getHeight() && 
+				tileMap.getType((int) (y - cheight / 2) / tileSize, (int) (x - cwidth / 2) / tileSize) == Tile.TERMINAL){
+			if(currentAction != TELEPORTING){
+				JukeBox.play("next");
+				currentAction = TELEPORTING;
+				animation.setFrames(sprites.get(TELEPORTING));
+				animation.setDelay(200);
+				width = 16;
+			}
+			
+			if(animation.hasPlayedOnce()){
+				teleported = true;
 			}
 		}else if(dy > 0){
 			if(currentAction != FALLING){

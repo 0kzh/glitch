@@ -49,9 +49,7 @@ public class PauseState extends GameState {
 			pauseButton = false;
 		}
 		if(Keys.isPressed(Keys.BUTTON1)) {
-			gsm.setPaused(false);
-			gsm.setState(GameStateManager.MENUSTATE);
-			JukeBox.stopAll();
+			System.exit(-1);
 		}
 	}
 

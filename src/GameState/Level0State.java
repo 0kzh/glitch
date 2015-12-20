@@ -65,9 +65,9 @@ public class Level0State extends GameState{
 		//hud = new HUD(player);
 		
 		
-		JukeBox.load("/Music/intro.mp3", "intro");
+		JukeBox.load("/Music/bg.mp3", "bg");
 		JukeBox.load("/SFX/press.mp3", "press");
-		JukeBox.loop("intro", 600, JukeBox.getFrames("intro") - 2200);
+		JukeBox.loop("bg", 600, JukeBox.getFrames("bg") - 2200);
 		
 	}
 	
@@ -75,7 +75,7 @@ public class Level0State extends GameState{
 		if(index < dialog.length){
 			fs = new FillScreen(Color.BLACK);
 			dbox = dialog[index];
-			JukeBox.stop("intro");
+			JukeBox.stop("bg");
 			talking = true;
 		}else{
 			fs.setRemove(true);
@@ -103,7 +103,7 @@ public class Level0State extends GameState{
 			}
 			
 			if(player.tl == Tile.DAMAGING || player.tr == Tile.DAMAGING || player.bl == Tile.DAMAGING || player.br == Tile.DAMAGING){
-				JukeBox.stop("intro");
+				JukeBox.stop("bg");
 			}
 			
 			if(playedOnce){
@@ -166,7 +166,7 @@ public class Level0State extends GameState{
 					Thread.sleep(10);
 					index2++;
 				}else{
-					JukeBox.resume("intro", true);
+					JukeBox.resume("bg", true);
 					
 				}
 			}

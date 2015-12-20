@@ -93,12 +93,11 @@ public DialogBox(String s, int character, boolean bold){
 		
 		
 		try {
-			Thread.sleep(40);
+			Thread.sleep(30);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		//g.drawString(player.getAmmo() + "/" + player.getMaxAmmo(), 30, 45);
 		
 	}
 	
