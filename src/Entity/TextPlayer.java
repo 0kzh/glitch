@@ -4,11 +4,11 @@ import TileMap.*;
 
 import java.util.ArrayList;
 import Audio.JukeBox;
-import GameState.GameStateManager;
 import GameState.Level0State;
-import Handlers.Keys;
 
 import javax.imageio.ImageIO;
+import Entity.Particle;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -22,10 +22,12 @@ public class TextPlayer extends MapObject{
 	private int spawnY;
 	
 	public boolean dboxFinish;
-	private boolean wallJump;
-	public boolean alreadyWallJump;
+	private boolean hasJumped;
+	private boolean doubleJump;
+	public boolean alreadyDoubleJump;
+	private double doubleJumpStart;
 	public static boolean teleported;
-	private double wallJumpStart;
+	private ArrayList<Particle> energyParticles;
 	
 	// animations
 	private ArrayList<BufferedImage[]> sprites;
@@ -58,7 +60,7 @@ public class TextPlayer extends MapObject{
 		maxFallSpeed = 4.0;
 		jumpStart = -4;
 		stopJumpSpeed = 0.2;
-		wallJumpStart = -4;
+		doubleJumpStart = -3.8;
 		
 		facingRight = true;
 		
@@ -85,6 +87,7 @@ public class TextPlayer extends MapObject{
 		}
 		
 		animation = new Animation();
+		energyParticles = new ArrayList<Particle>();
 		currentAction = IDLE;
 		animation.setFrames(sprites.get(IDLE));
 		animation.setDelay(400);
@@ -92,6 +95,11 @@ public class TextPlayer extends MapObject{
 		JukeBox.load("/SFX/jump.mp3", "jump");
 		JukeBox.load("/SFX/dead.mp3", "dead");
 		
+	}
+	
+	public void init(
+			ArrayList<Particle> energyParticles) {
+			this.energyParticles = energyParticles;
 	}
 	
 	public int getHealth() { return health; }
@@ -105,14 +113,10 @@ public class TextPlayer extends MapObject{
 	
 	public void setJumping(boolean b) {
 		if(!dboxFinish){
-			if(b && !jumping && falling && !alreadyWallJump && (tr == Tile.BLOCKED || tl == Tile.BLOCKED)) {
-				wallJump = true;
+			if(b && !alreadyDoubleJump && hasJumped) {
+				doubleJump = true;
 			}
-			if(x > 0 && y > 0 && x < tileMap.getWidth() && y < tileMap.getHeight()){
-				if(tileMap.getType((int) y / tileSize - 1, (int) (x) / tileSize) != Tile.BLOCKED){
-					jumping = b;
-				}
-			}
+			jumping = b;
 		}
 	}
 	
@@ -121,19 +125,6 @@ public class TextPlayer extends MapObject{
 			Enemy e = enemies.get(i);
 			if(intersects(e)){
 				health = 0;	
-			}
-		}
-	}
-	
-	public void checkPlatformCollision(ArrayList<MovingPlatform> platforms){
-		// check if player touching tile platform
-		for(int i = 0; i < platforms.size(); i++){
-			MovingPlatform mp = platforms.get(i);
-			
-			if((bl == Tile.PLATFORM || br == Tile.PLATFORM) && currentAction == IDLE){
-				//System.out.println(mp.dx);
-				dx = mp.dx * 1.66;
-				dy = mp.dy;
 			}
 		}
 	}
@@ -165,23 +156,26 @@ public class TextPlayer extends MapObject{
 			}
 		}
 		
-		//jumping
-		if(jumping && !falling){
-			JukeBox.play("jump");
+		if(jumping && !falling) {
 			dy = jumpStart;
 			falling = true;
+			hasJumped = true;
+			
+			JukeBox.play("jump");
 		}
 		
-		//wall jump
-		if(wallJump) {
-			dy = wallJumpStart;
-			if(facingRight){
-				dx = -3;
-			}else{
-				dx = 3;
-			}
-			alreadyWallJump = true;
-			wallJump = false;
+		if(jumping && falling && !hasJumped){
+			dy = jumpStart;
+			falling = true;
+			hasJumped = true;
+			
+			JukeBox.play("jump");
+		}
+		//double jump
+		if(doubleJump) {
+			dy = doubleJumpStart;
+			alreadyDoubleJump = true;
+			doubleJump = false;
 			JukeBox.play("jump");
 		}
 		
@@ -192,13 +186,21 @@ public class TextPlayer extends MapObject{
 			if(dy < 0 && !jumping) dy += stopJumpSpeed;
 			if(dy > maxFallSpeed) dy = maxFallSpeed;
 		}else{
-			alreadyWallJump = false;
+			alreadyDoubleJump = false;
+			hasJumped = false;
 		}
 		
 	}
 	
 	public void update() {
 		
+		for(int i = 0; i < energyParticles.size(); i++) {
+			energyParticles.get(i).update();
+			if(energyParticles.get(i).shouldRemove()) {
+				energyParticles.remove(i);
+				i--;
+			}
+		}
 		
 		if(x > 0 && y > 0 && x < tileMap.getWidth() && y < tileMap.getHeight()){
 			if(tileMap.getType((int) y / tileSize, (int) (x) / tileSize) == Tile.DAMAGING){
@@ -231,22 +233,33 @@ public class TextPlayer extends MapObject{
 			checkTileMapCollision();
 			setPosition(xtemp, ytemp);
 		}
+		
 		if(health <= 0){
 			if(currentAction != DEAD){
 				currentAction = DEAD;
+				tileMap.fs = new FillScreen(Color.BLACK);
+				for(int i = 0; i < 6; i++) {
+					energyParticles.add(
+						new Particle(
+							tileMap,
+							x,
+							y + cheight / 4,
+							Particle.UP));
+				}
 				tileMap.setShaking(true, 10);
 				animation.setFrames(sprites.get(DEAD));
-				animation.setDelay(100);
+				animation.setDelay(50);
 				width = 16;
 				JukeBox.play("dead");
-				if(tileMap.fs != null){
-					if(!tileMap.fs.shouldRemove()) tileMap.fs.setRemove(true);
-				}
+				
 			}
 			if(animation.getFrame() >= 5){
 				Level0State.playedOnce = true;
 				tileMap.setShaking(false, 0);
 				respawn();
+				if(tileMap.fs != null){
+					if(!tileMap.fs.shouldRemove()) tileMap.fs.setRemove(true);
+				}
 			}else{
 				dx = 0;
 				dy = 0;
@@ -308,6 +321,10 @@ public class TextPlayer extends MapObject{
 	public void draw(Graphics2D g){
 		
 		setMapPosition();
+		for(int i = 0; i < energyParticles.size(); i++) {
+			energyParticles.get(i).draw(g);
+		}
 		super.draw(g);
+		
 	}
 }

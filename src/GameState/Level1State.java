@@ -24,19 +24,19 @@ public class Level1State extends GameState{
 	private DialogBox dbox2;
 	private DialogBox dbox1;
 	private TextPlayer player;
-	
 	private DialogBox[] dialog = {
-			new DialogBox("JUST KIDDING.", 2, true), 
-			new DialogBox("THAT CAT JUST KILLED YOU.", 2), 
-			new DialogBox("hahaha!", 2),
-			new DialogBox("HaHaHa!!", 2),
-			new DialogBox("HAHAHAHA!11!1!", 2)}; 
+			new DialogBox("JUST KIDDING.", 3, true), 
+			new DialogBox("THAT CAT JUST KILLED YOU.", 3), 
+			new DialogBox("hahaha!", 3),
+			new DialogBox("HaHaHa!!", 3),
+			new DialogBox("HAHAHAHA!11!1!", 3)}; 
 	private int index;
 	private int index2 = 0;
 	private boolean keyPressed;
 	private boolean talking;
 	private boolean pauseKeyPressed;
 	private boolean introduced = false;
+	private boolean jumped = false;
 	private long timePassed;
 	
 	public Level1State(GameStateManager gsm){
@@ -65,11 +65,11 @@ public class Level1State extends GameState{
 		player.setPosition(41, 212);
 		//hud = new HUD(player);
 		
-		JukeBox.stopAll();
-		JukeBox.load("/Music/level1-1.mp3", "level1");
+		if(JukeBox.isPlaying("bg")) JukeBox.stop("bg");
+		JukeBox.load("/Music/bg1.mp3", "level1");
 		JukeBox.load("/SFX/press.mp3", "press");
 		JukeBox.load("/SFX/level.mp3", "next");
-		JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
+		if(!JukeBox.isPlaying("level1")) JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
 		
 	}
 	private void printDialogue() {
@@ -222,7 +222,14 @@ public class Level1State extends GameState{
 		player.setLeft(Keys.keyState[Keys.LEFT]);
 		player.setDown(Keys.keyState[Keys.DOWN]);
 		player.setRight(Keys.keyState[Keys.RIGHT]);
-		player.setJumping(Keys.keyState[Keys.BUTTON1]);
+		if(Keys.isPressed(Keys.BUTTON1)){
+			if(!jumped){
+				player.setJumping(true);
+				jumped = true;
+			}
+		}else{
+			jumped = false;
+		}
 	}
 	
 }

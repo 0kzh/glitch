@@ -18,10 +18,10 @@ public class MovingPlatform extends Platform{
 		moveSpeed = 0.7;
 		maxSpeed = 0.7;
 		
-		width = 64;
+		width = 48;
 		height = 16;
-		cwidth = 64;
-		cheight = 16;
+		cwidth = 48;
+		cheight = 14;
 		
 		// load sprites
 		try{
@@ -30,7 +30,7 @@ public class MovingPlatform extends Platform{
 			
 			sprites = new BufferedImage[1];
 			for(int i = 0; i < sprites.length; i++){
-				sprites[i] = spritesheet.getSubimage(0, 0, 64, 16);
+				sprites[i] = spritesheet.getSubimage(0, 0, 48, 16);
 			}
 			
 		}catch(Exception e){
@@ -39,7 +39,7 @@ public class MovingPlatform extends Platform{
 		
 		animation = new Animation();
 		animation.setFrames(sprites);
-		animation.setDelay(300);
+		//animation.setDelay(300); may add back if doesn't work
 		
 		right = true;
 		
@@ -64,18 +64,21 @@ public class MovingPlatform extends Platform{
 	public void update(){
 		//update position	
 		
-		//set blocks to blocked tiles?
+		/*
 		if(tileMap.isLoaded()){
 			for(int i = 0; i < 4; i++){
 				//System.out.println((int) (xtemp - cwidth / 2) / tileSize + 1);
 				//System.out.println(tileMap.getType((int) (xtemp - cwidth / 2) / tileSize + 1, (int) (ytemp - cheight / 2) / tileSize));
 				int row = (int) (ytemp - cheight / 2) / tileSize;
 				int col = (int) (xtemp - cwidth / 2) / tileSize + i;
-				tileMap.setType(row, col, 9);
-				if(tileMap.getType(row, col - 4) != Tile.BLOCKED) tileMap.setType(row, col - 4, 0);
-				if(tileMap.getType(row, col + 1) != Tile.BLOCKED) tileMap.setType(row, col + 1, 0);
+				tileMap.setType(row, col, 2);
+				if(col - 2 > 0){
+					if(tileMap.getType(row, col - 2) == Tile.PLATFORM) tileMap.setType(row, col - 2, 0);
+				}
+				if(tileMap.getType(row, col + 1) == Tile.PLATFORM) tileMap.setType(row, col + 1, 0);
 			}
 		}
+		*/
 		
 		//if it hits wall, turn
 		if(right && dx == 0.0) {

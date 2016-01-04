@@ -15,18 +15,19 @@ import Audio.JukeBox;
 public class GameStateManager {
 
 	private GameState[] gameStates;
-	private int currentState;
+	public static int currentState;
 	
 	private PauseState pauseState;
 	public boolean paused;
 	
-	public static final int NUMGAMESTATES = 6;
+	public static final int NUMGAMESTATES = 7;
 	public static final int MENUSTATE = 0;
 	public static final int OPTIONSSTATE = 1;
 	public static final int INTROSTATE = 2;
 	public static final int LEVEL1STATE = 3;
 	public static final int LEVEL2STATE = 4;
 	public static final int LEVEL3STATE = 5;
+	public static final int LEVEL4STATE = 6;
 	
 	
 	public GameStateManager() {
@@ -67,6 +68,10 @@ public class GameStateManager {
 		
 		if(state == LEVEL3STATE){
 			gameStates[state] = new Level3State(this);
+		}
+		
+		if(state == LEVEL4STATE){
+			gameStates[state] = new Level4State(this);
 		}
 		
 	}

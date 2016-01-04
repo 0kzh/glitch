@@ -2,7 +2,6 @@ package GameState;
 
 import java.awt.*;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;

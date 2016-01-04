@@ -23,18 +23,21 @@ public class Level0State extends GameState{
 	private DialogBox dbox;
 	private DialogBox dbox1;
 	private TextPlayer player;
-	
+	private TextHelper[] messages = {new TextHelper("Z", 195, 181, Color.WHITE), new TextHelper("DOUBLE JUMP!", 235, 135, Color.WHITE)};
 	//private ArrayList<Explosion> explosions; 
 	private DialogBox[] dialog = {
 			new DialogBox("Greetings Player! Welcome to GLITCH!", 2), 
-			new DialogBox("Use the right and left arrow keys to move.", 2), 
-			new DialogBox("Use Z to jump!", 2)}; 
+			new DialogBox("I'm Bill, and I will be your guide today!", 2), 
+			new DialogBox("And now... for the controls:", 2),
+			new DialogBox("Use the arrow keys to move!", 2),
+			new DialogBox("Press Z to jump!", 2)}; 
 	private int index;
 	private int index2 = 0;
 	private boolean keyPressed;
 	private boolean talking;
 	private boolean pauseKeyPressed;
 	private boolean introduced = false;
+	private boolean jumped = false;
 	private long timePassed;
 	public static boolean playedOnce = false;
 	
@@ -60,10 +63,9 @@ public class Level0State extends GameState{
 		player = new TextPlayer(tileMap);
 		//player.setSpawnPoint(489, 55);
 		//player.setPosition(489, 55);
-		player.setSpawnPoint(280, 206);
-		player.setPosition(280, 206);
+		player.setSpawnPoint(35, 206);
+		player.setPosition(35, 206);
 		//hud = new HUD(player);
-		
 		
 		JukeBox.load("/Music/bg.mp3", "bg");
 		JukeBox.load("/SFX/press.mp3", "press");
@@ -97,7 +99,7 @@ public class Level0State extends GameState{
 			
 			if(player.getx() < 205 && player.gety() < 75){
 				if(dbox1 == null){
-					dbox1 = new DialogBox("See that cat? You should try petting it!", 2);
+					dbox1 = new DialogBox("Pet that cat to advance to the next level!", 2);
 					talking = true;
 				}
 			}
@@ -145,6 +147,12 @@ public class Level0State extends GameState{
 		//draw tilemap
 		tileMap.draw(g);
 		
+		//draw messages
+		if(tileMap.fs == null){
+			for(int i = 0; i < messages.length; i++){
+				messages[i].draw(g);
+			}
+		}
 		//draw player
 		player.draw(g);
 		
@@ -161,6 +169,7 @@ public class Level0State extends GameState{
 			}else{
 				
 				if(index2 < 30){
+					g.setColor(Color.BLACK);
 					g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT / 2 - (index2 * GamePanel.HEIGHT / 60));
 					g.fillRect(0, GamePanel.HEIGHT / 2 + (index2 * GamePanel.HEIGHT / 60), GamePanel.WIDTH, GamePanel.HEIGHT / 2);
 					Thread.sleep(10);
@@ -204,7 +213,15 @@ public class Level0State extends GameState{
 		player.setLeft(Keys.keyState[Keys.LEFT]);
 		player.setDown(Keys.keyState[Keys.DOWN]);
 		player.setRight(Keys.keyState[Keys.RIGHT]);
-		player.setJumping(Keys.keyState[Keys.BUTTON1]);
+		if(Keys.isPressed(Keys.BUTTON1)){
+			if(!jumped){
+				player.setJumping(true);
+				jumped = true;
+			}
+		}else{
+			jumped = false;
+		}
+		
 	}
 
 	

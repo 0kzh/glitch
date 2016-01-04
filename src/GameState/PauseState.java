@@ -3,8 +3,6 @@ package GameState;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-
-import Audio.JukeBox;
 import Handlers.Keys;
 import Main.GamePanel;
 

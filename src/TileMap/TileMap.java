@@ -67,7 +67,9 @@ public class TileMap {
 			for(int col = 0; col < numTilesAcross; col++){
 				subimage = tileset.getSubimage(col * tileSize, 0, tileSize, tileSize);
 				if(s.equals("/Tilesets/texttileset.png") || s.equals("/Tilesets/tileset.png")){
-					if(col == 4){
+					if(col == 2){
+						tiles[0][col] = new Tile(subimage, Tile.PLATFORM);
+					}else if(col == 4){
 						tiles[0][col] = new Tile(subimage, Tile.TERMINAL);
 					}else if(col == 3){
 						tiles[0][col] = new Tile(subimage, Tile.DAMAGING);
@@ -79,7 +81,7 @@ public class TileMap {
 				}
 				subimage = tileset.getSubimage(col * tileSize, tileSize, tileSize, tileSize);
 				if(s.equals("/Tilesets/texttileset.png") || s.equals("/Tilesets/tileset.png")){
-					if(col == 3){
+					if(col == 15){
 						tiles[1][col] = new Tile(subimage, Tile.DAMAGING);
 					}else if(col == 4){
 						tiles[1][col] = new Tile(subimage, Tile.PLATFORM);

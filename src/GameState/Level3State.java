@@ -20,12 +20,14 @@ public class Level3State extends GameState{
 	private Background bg;
 	private Console console;
 	private FillScreen fs;
+	
+	private DialogBox dbox1;
 	private TextPlayer player;
+	private TextHelper[] messages = {new TextHelper("DROP, JUMP, JUMP!", 177, 29, Color.WHITE)};
 	private int index2 = 0;
-	private boolean keyPressed;
 	private boolean talking;
 	private boolean pauseKeyPressed;
-	private boolean introduced = false;
+	private boolean jumped = false;
 	private long timePassed;
 	
 	public Level3State(GameStateManager gsm){
@@ -54,17 +56,16 @@ public class Level3State extends GameState{
 		player.setPosition(39, 215);
 		//hud = new HUD(player);
 		
-		JukeBox.stopAll();
+		if(JukeBox.isPlaying("level1")) JukeBox.stop("level3");
 		
 		JukeBox.load("/Music/bg.mp3", "bg");
 		JukeBox.load("/SFX/press.mp3", "press");
 		JukeBox.load("/SFX/level.mp3", "next");
-		JukeBox.loop("bg", 600, JukeBox.getFrames("bg") - 2200);
+		if(!JukeBox.isPlaying("bg")) JukeBox.loop("bg", 600, JukeBox.getFrames("bg") - 2200);
 		
 	}
 
 	public void update() {
-		// check keys
 		
 		long elapsed = (System.nanoTime() - timePassed) / 1000000;
 		if(elapsed > 500) player.dboxFinish = false;
@@ -105,12 +106,23 @@ public class Level3State extends GameState{
 		//draw tilemap
 		tileMap.draw(g);
 		
+		//draw messages
+		if(!(player.getHealth() <= 0)){
+			for(int i = 0; i < messages.length; i++){
+				messages[i].draw(g);
+			}
+		}
+		
 		//draw player
 		player.draw(g);
 		
 		if(console != null) console.draw(g);
 		//draw hud
 		//hud.draw(g);
+		
+		if(dbox1 != null && !dbox1.shouldRemove()){
+			dbox1.draw(g);
+		}
 		
 		try{
 			if(!fs.shouldRemove()){
@@ -149,7 +161,14 @@ public class Level3State extends GameState{
 		player.setLeft(Keys.keyState[Keys.LEFT]);
 		player.setDown(Keys.keyState[Keys.DOWN]);
 		player.setRight(Keys.keyState[Keys.RIGHT]);
-		player.setJumping(Keys.keyState[Keys.BUTTON1]);
+		if(Keys.isPressed(Keys.BUTTON1)){
+			if(!jumped){
+				player.setJumping(true);
+				jumped = true;
+			}
+		}else{
+			jumped = false;
+		}
 	}
 	
 }

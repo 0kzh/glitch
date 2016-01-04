@@ -19,11 +19,8 @@ public class OptionsState extends GameState {
 	
 	private static int currentChoice = 0;
 	private String[] keys = {"Jump: ", "Shoot: ", "Left: ", "Right: ", "Mute: ", "<- Back"};
-	private String copyright = "2015 Kelvin Zhang";
-	private String version = "Version 1.0";
 	private boolean buttonPressed = false;
 	private static boolean enterPressed = false;
-	private static boolean mutePressed = false;
 	
 	public static boolean reading;
 	public static int keyPress;

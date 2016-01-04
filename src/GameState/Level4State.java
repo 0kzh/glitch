@@ -14,30 +14,23 @@ import Main.GamePanel;
 import TileMap.*;
 import Audio.JukeBox;
 
-public class Level2State extends GameState{
+public class Level4State extends GameState{
 
 	private TileMap tileMap;
 	private Background bg;
 	private Console console;
 	private FillScreen fs;
-	private DialogBox dbox;
+	
 	private DialogBox dbox1;
 	private TextPlayer player;
-	private TextHelper[] messages = {new TextHelper("TIMING IS KEY.", 25, 68, Color.WHITE)};
-	private DialogBox[] dialog = {
-			new DialogBox("Hmm...", 4), 
-			new DialogBox("Perhaps that was a bit too easy.", 4), 
-			new DialogBox("Let's make things more... interesting.", 3)};
-	private int index;
+	private TextHelper[] messages = {new TextHelper("DROP, JUMP, JUMP!", 177, 29, Color.WHITE)};
 	private int index2 = 0;
-	private boolean keyPressed;
 	private boolean talking;
 	private boolean pauseKeyPressed;
 	private boolean jumped = false;
-	public static boolean started = false;
 	private long timePassed;
 	
-	public Level2State(GameStateManager gsm){
+	public Level4State(GameStateManager gsm){
 		super(gsm);
 		init();
 		try {
@@ -51,7 +44,7 @@ public class Level2State extends GameState{
 		//initialize tile map
 		tileMap = new TileMap(16);
 		tileMap.loadTiles("/Tilesets/texttileset.png");
-		tileMap.loadMap("/Maps/level2.map");
+		tileMap.loadMap("/Maps/level3.map");
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
 		
@@ -63,7 +56,7 @@ public class Level2State extends GameState{
 		player.setPosition(39, 215);
 		//hud = new HUD(player);
 		
-		if(JukeBox.isPlaying("level1")) JukeBox.stop("level1");
+		if(JukeBox.isPlaying("level1")) JukeBox.stop("level3");
 		
 		JukeBox.load("/Music/bg.mp3", "bg");
 		JukeBox.load("/SFX/press.mp3", "press");
@@ -71,26 +64,8 @@ public class Level2State extends GameState{
 		if(!JukeBox.isPlaying("bg")) JukeBox.loop("bg", 600, JukeBox.getFrames("bg") - 2200);
 		
 	}
-	
-	private void printDialogue() {
-		if(index < dialog.length){
-			fs = new FillScreen(Color.BLACK);
-			dbox = dialog[index];
-			JukeBox.stop("bg");
-			talking = true;
-		}else{
-			if(!fs.shouldRemove()){
-				fs.setRemove(true);
-			}
-			if(dbox.shouldRemove()) talking = false;
-		}
-		
-	}
 
 	public void update() {
-		// check keys
-		
-		printDialogue();
 		
 		long elapsed = (System.nanoTime() - timePassed) / 1000000;
 		if(elapsed > 500) player.dboxFinish = false;
@@ -162,23 +137,9 @@ public class Level2State extends GameState{
 				
 				}else{
 					JukeBox.resume("bg", true);
-					started = true;
 				}
 			}
 			
-			if(!dbox.shouldRemove()){
-				dbox.draw(g);
-				if(Keys.isPressed(Keys.BUTTON1) && !keyPressed && dbox.isDone()){
-					dbox.setRemove(true);
-					
-					keyPressed = true;
-				}else if(!Keys.isPressed(Keys.BUTTON1)){
-					keyPressed = false;
-				}
-			}
-			else if(index < dialog.length){
-				index++;
-			}
 		}catch(Exception e){
 		}
 	}

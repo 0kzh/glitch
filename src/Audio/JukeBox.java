@@ -6,7 +6,9 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.FloatControl;
+
+import GameState.GameStateManager;
+import GameState.Level2State;
 
 public class JukeBox {
 	
@@ -61,9 +63,13 @@ public class JukeBox {
 	}
 	
 	public static boolean isPlaying(String s){
-		if(clips.get(s).isRunning()){
-			return true;
-		}else{
+		try{
+			if(clips.get(s).isRunning()){
+				return true;
+			}else{
+				return false;
+			}
+		}catch(Exception e){
 			return false;
 		}
 	}
@@ -81,7 +87,6 @@ public class JukeBox {
 		if(clips.get(s) == null) return;
 		if(clips.get(s).isRunning()){
 			clips.get(s).stop();
-			clips.get(s).setFramePosition(clips.get(s).getFramePosition());
 		}
 		
 	}
@@ -97,7 +102,11 @@ public class JukeBox {
 		if(clips.get(s).isRunning()) return;
 		clips.get(s).start();
 		if(b){
-			loop(s, clips.get(s).getFramePosition(), 600, clips.get(s).getFrameLength() -  2200);
+			if(GameStateManager.currentState == GameStateManager.LEVEL2STATE && !Level2State.started){
+				loop(s, (int) (clips.get("level1").getFramePosition() * 1.19), 600, clips.get(s).getFrameLength() -  2200);
+			}else{
+				loop(s, clips.get(s).getFramePosition(), 600, clips.get(s).getFrameLength() -  2200);
+			}
 		}
 	}
 	
@@ -119,6 +128,12 @@ public class JukeBox {
 		clips.get(s).setLoopPoints(start, end);
 		clips.get(s).setFramePosition(frame);
 		clips.get(s).loop(Clip.LOOP_CONTINUOUSLY);
+	}
+	
+	public static void loop(String s, int start, int end, boolean b) {
+		if(b){
+			loop(s, (int) (clips.get("level1").getFramePosition() * 1.19), 600, clips.get(s).getFrameLength() -  2200);
+		}
 	}
 	
 	public static void setPosition(String s, int frame) {

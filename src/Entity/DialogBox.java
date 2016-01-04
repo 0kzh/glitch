@@ -35,6 +35,10 @@ public class DialogBox{
 				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/textavatar.png"));
 			}else if(character == 2){
 				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar.png"));
+			}else if(character == 3){
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar2.png"));
+			}else if(character == 4){
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar3.png"));
 			}
 			
 			font = new Font("Arial", Font.PLAIN, 11);
@@ -57,6 +61,10 @@ public DialogBox(String s, int character, boolean bold){
 				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/textavatar.png"));
 			}else if(character == 2){
 				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar.png"));
+			}else if(character == 3){
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar2.png"));
+			}else if(character == 4){
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar3.png"));
 			}
 			
 			if(bold) font = new Font("Arial", Font.BOLD, 11);
