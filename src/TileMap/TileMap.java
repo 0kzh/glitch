@@ -2,10 +2,8 @@ package TileMap;
 
 import java.awt.*;
 import java.awt.image.*;
-
 import java.io.*;
 import javax.imageio.ImageIO;
-
 import Entity.FillScreen;
 import Main.GamePanel;
 
@@ -83,8 +81,6 @@ public class TileMap {
 				if(s.equals("/Tilesets/texttileset.png") || s.equals("/Tilesets/tileset.png")){
 					if(col == 15){
 						tiles[1][col] = new Tile(subimage, Tile.DAMAGING);
-					}else if(col == 4){
-						tiles[1][col] = new Tile(subimage, Tile.PLATFORM);
 					}else{
 						tiles[1][col] = new Tile(subimage, Tile.BLOCKED);
 					}
@@ -191,10 +187,6 @@ public class TileMap {
 			this.y += Math.random() * intensity - intensity / 2;
 			
 		}else{
-			/*
-			if(fs != null){
-				if(!fs.shouldRemove()) fs.setRemove(true);
-			}*/
 		}
 	}
 	

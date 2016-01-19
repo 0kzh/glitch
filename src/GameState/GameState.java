@@ -8,6 +8,7 @@ public abstract class GameState {
 
 	protected static GameStateManager gsm;
 	
+	@SuppressWarnings("static-access")
 	public GameState(GameStateManager gsm) {
 		this.gsm = gsm;
 	}

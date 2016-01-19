@@ -2,17 +2,12 @@ package GameState;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
-
 import GameState.GameStateManager;
-
 import Handlers.Keys;
-
 import Entity.*;
-import Entity.Enemies.*;
 import Main.GamePanel;
 import TileMap.*;
-import Audio.JukeBox;
+import Audio.*;
 
 public class Level3State extends GameState{
 
@@ -20,14 +15,21 @@ public class Level3State extends GameState{
 	private Background bg;
 	private Console console;
 	private FillScreen fs;
-	
+	private DialogBox dbox;
 	private DialogBox dbox1;
-	private TextPlayer player;
-	private TextHelper[] messages = {new TextHelper("DROP, JUMP, JUMP!", 177, 29, Color.WHITE)};
+	private Player player;
+	private TextHelper[] messages = {new TextHelper("Timing is key.", 25, 68, Color.WHITE)};
+	private DialogBox[] dialog = {
+			new DialogBox("Hmm...", 4), 
+			new DialogBox("Perhaps that was a bit too easy.", 4), 
+			new DialogBox("Let's make things more... interesting.", 3)};
+	private int index;
 	private int index2 = 0;
+	private boolean keyPressed;
 	private boolean talking;
 	private boolean pauseKeyPressed;
 	private boolean jumped = false;
+	public static boolean started = false;
 	private long timePassed;
 	
 	public Level3State(GameStateManager gsm){
@@ -41,6 +43,7 @@ public class Level3State extends GameState{
 	}
 	
 	public void init() {
+		fs = new FillScreen(Color.BLACK);
 		//initialize tile map
 		tileMap = new TileMap(16);
 		tileMap.loadTiles("/Tilesets/texttileset.png");
@@ -49,23 +52,41 @@ public class Level3State extends GameState{
 		tileMap.setTween(1);
 		
 		bg = new Background("/Backgrounds/level1bg.png", 0.1);
-		player = new TextPlayer(tileMap);
+		player = new Player(tileMap);
 		//player.setSpawnPoint(489, 55);
 		//player.setPosition(489, 55);
 		player.setSpawnPoint(39, 215);
 		player.setPosition(39, 215);
 		//hud = new HUD(player);
 		
-		if(JukeBox.isPlaying("level1")) JukeBox.stop("level3");
+		if(JukeBox.isPlaying("level1")) JukeBox.stop("level1");
 		
 		JukeBox.load("/Music/bg.mp3", "bg");
 		JukeBox.load("/SFX/press.mp3", "press");
 		JukeBox.load("/SFX/level.mp3", "next");
-		if(!JukeBox.isPlaying("bg")) JukeBox.loop("bg", 600, JukeBox.getFrames("bg") - 2200);
+		//if(!JukeBox.isPlaying("bg")) JukeBox.loop("bg", 600, JukeBox.getFrames("bg") - 2200);
+		
+	}
+	
+	private void printDialogue() {
+		if(index < dialog.length){
+			dbox = dialog[index];
+			if(JukeBox.isPlaying("bg")) JukeBox.stop("bg");
+			talking = true;
+		}else{
+			if(!fs.shouldRemove()){
+				fs.setRemove(true);
+			}
+			if(dbox.shouldRemove()) talking = false;
+		}
 		
 	}
 
+	@SuppressWarnings("static-access")
 	public void update() {
+		// check keys
+		
+		printDialogue();
 		
 		long elapsed = (System.nanoTime() - timePassed) / 1000000;
 		if(elapsed > 500) player.dboxFinish = false;
@@ -77,8 +98,10 @@ public class Level3State extends GameState{
 			}
 			
 			if(player.tl == Tile.TERMINAL || player.tr == Tile.TERMINAL || player.bl == Tile.TERMINAL || player.br == Tile.TERMINAL){
-				JukeBox.play("next");
-				gsm.setState(GameStateManager.LEVEL3STATE);
+				if(player.teleported){
+					gsm.setState(GameStateManager.LEVEL4STATE);
+					player.teleported = false;
+				}
 			}
 			
 			tileMap.setPosition(
@@ -137,9 +160,23 @@ public class Level3State extends GameState{
 				
 				}else{
 					JukeBox.resume("bg", true);
+					started = true;
 				}
 			}
 			
+			if(!dbox.shouldRemove()){
+				dbox.draw(g);
+				if(Keys.isPressed(Keys.BUTTON1) && !keyPressed && dbox.isDone()){
+					dbox.setRemove(true);
+					
+					keyPressed = true;
+				}else if(!Keys.isPressed(Keys.BUTTON1)){
+					keyPressed = false;
+				}
+			}
+			else if(index < dialog.length){
+				index++;
+			}
 		}catch(Exception e){
 		}
 	}

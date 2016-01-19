@@ -20,21 +20,13 @@ public class Level2State extends GameState{
 	private Background bg;
 	private Console console;
 	private FillScreen fs;
-	private DialogBox dbox;
 	private DialogBox dbox1;
-	private TextPlayer player;
-	private TextHelper[] messages = {new TextHelper("TIMING IS KEY.", 25, 68, Color.WHITE)};
-	private DialogBox[] dialog = {
-			new DialogBox("Hmm...", 4), 
-			new DialogBox("Perhaps that was a bit too easy.", 4), 
-			new DialogBox("Let's make things more... interesting.", 3)};
-	private int index;
+	private Player player;
+	private ArrayList<Enemy> enemies;
 	private int index2 = 0;
-	private boolean keyPressed;
 	private boolean talking;
 	private boolean pauseKeyPressed;
 	private boolean jumped = false;
-	public static boolean started = false;
 	private long timePassed;
 	
 	public Level2State(GameStateManager gsm){
@@ -49,6 +41,7 @@ public class Level2State extends GameState{
 	
 	public void init() {
 		//initialize tile map
+		
 		tileMap = new TileMap(16);
 		tileMap.loadTiles("/Tilesets/texttileset.png");
 		tileMap.loadMap("/Maps/level2.map");
@@ -56,54 +49,48 @@ public class Level2State extends GameState{
 		tileMap.setTween(1);
 		
 		bg = new Background("/Backgrounds/level1bg.png", 0.1);
-		player = new TextPlayer(tileMap);
-		//player.setSpawnPoint(489, 55);
-		//player.setPosition(489, 55);
-		player.setSpawnPoint(39, 215);
-		player.setPosition(39, 215);
-		//hud = new HUD(player);
+		player = new Player(tileMap);
+		player.setSpawnPoint(37, 160);
+		player.setPosition(37, 160);
 		
-		if(JukeBox.isPlaying("level1")) JukeBox.stop("level1");
+		enemies = new ArrayList<Enemy>();
+		Enemy bat = new Bat(tileMap);
+		bat.setPosition(169, 135);
+		enemies.add(bat);
 		
-		JukeBox.load("/Music/bg.mp3", "bg");
+		Enemy worm = new Slugger(tileMap);
+		worm.setPosition(233, 187);
+		enemies.add(worm);
+		
+		JukeBox.load("/Music/bg1.mp3", "level1");
 		JukeBox.load("/SFX/press.mp3", "press");
 		JukeBox.load("/SFX/level.mp3", "next");
-		if(!JukeBox.isPlaying("bg")) JukeBox.loop("bg", 600, JukeBox.getFrames("bg") - 2200);
-		
-	}
-	
-	private void printDialogue() {
-		if(index < dialog.length){
-			fs = new FillScreen(Color.BLACK);
-			dbox = dialog[index];
-			JukeBox.stop("bg");
-			talking = true;
-		}else{
-			if(!fs.shouldRemove()){
-				fs.setRemove(true);
-			}
-			if(dbox.shouldRemove()) talking = false;
-		}
+		if(!JukeBox.isPlaying("level1")) JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
 		
 	}
 
+	@SuppressWarnings("static-access")
 	public void update() {
-		// check keys
 		
-		printDialogue();
+		for(int i = 0; i < enemies.size(); i++){
+			enemies.get(i).update();
+		}
 		
 		long elapsed = (System.nanoTime() - timePassed) / 1000000;
 		if(elapsed > 500) player.dboxFinish = false;
 		
-		if(!talking && JukeBox.isPlaying("bg")){
+		if(!talking && JukeBox.isPlaying("level1")){
 			if(console == null){
 				handleInput();
 				player.update();
+				player.checkAttack(enemies);
 			}
 			
 			if(player.tl == Tile.TERMINAL || player.tr == Tile.TERMINAL || player.bl == Tile.TERMINAL || player.br == Tile.TERMINAL){
-				JukeBox.play("next");
-				gsm.setState(GameStateManager.LEVEL3STATE);
+				if(player.teleported){
+					gsm.setState(GameStateManager.LEVEL3STATE);
+					player.teleported = false;
+				}
 			}
 			
 			tileMap.setPosition(
@@ -118,8 +105,6 @@ public class Level2State extends GameState{
 			player.dboxFinish = true;
 			timePassed = System.nanoTime();
 		}
-		
-		
 	}
 
 	
@@ -133,8 +118,8 @@ public class Level2State extends GameState{
 		
 		//draw messages
 		if(!(player.getHealth() <= 0)){
-			for(int i = 0; i < messages.length; i++){
-				messages[i].draw(g);
+			for(int i = 0; i < enemies.size(); i++){
+				enemies.get(i).draw(g);
 			}
 		}
 		
@@ -162,23 +147,9 @@ public class Level2State extends GameState{
 				
 				}else{
 					JukeBox.resume("bg", true);
-					started = true;
 				}
 			}
 			
-			if(!dbox.shouldRemove()){
-				dbox.draw(g);
-				if(Keys.isPressed(Keys.BUTTON1) && !keyPressed && dbox.isDone()){
-					dbox.setRemove(true);
-					
-					keyPressed = true;
-				}else if(!Keys.isPressed(Keys.BUTTON1)){
-					keyPressed = false;
-				}
-			}
-			else if(index < dialog.length){
-				index++;
-			}
 		}catch(Exception e){
 		}
 	}

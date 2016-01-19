@@ -8,7 +8,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 import GameState.GameStateManager;
-import GameState.Level2State;
+import GameState.Level3State;
 
 public class JukeBox {
 	
@@ -102,8 +102,12 @@ public class JukeBox {
 		if(clips.get(s).isRunning()) return;
 		clips.get(s).start();
 		if(b){
-			if(GameStateManager.currentState == GameStateManager.LEVEL2STATE && !Level2State.started){
-				loop(s, (int) (clips.get("level1").getFramePosition() * 1.19), 600, clips.get(s).getFrameLength() -  2200);
+			if(GameStateManager.currentState == GameStateManager.LEVEL3STATE && !Level3State.started){
+				int time = (int) (clips.get("level1").getFramePosition() * 1.19);
+				if(time <= clips.get(s).getFrameLength() - 2200){
+					loop(s, time, 600, clips.get(s).getFrameLength() -  2200);
+				}
+				//loop(s, (int) (clips.get("level1").getFramePosition() * 1.19), 600, clips.get(s).getFrameLength() -  2200);
 			}else{
 				loop(s, clips.get(s).getFramePosition(), 600, clips.get(s).getFrameLength() -  2200);
 			}

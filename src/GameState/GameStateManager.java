@@ -20,7 +20,7 @@ public class GameStateManager {
 	private PauseState pauseState;
 	public boolean paused;
 	
-	public static final int NUMGAMESTATES = 7;
+	public static final int NUMGAMESTATES = 12;
 	public static final int MENUSTATE = 0;
 	public static final int OPTIONSSTATE = 1;
 	public static final int INTROSTATE = 2;
@@ -28,7 +28,11 @@ public class GameStateManager {
 	public static final int LEVEL2STATE = 4;
 	public static final int LEVEL3STATE = 5;
 	public static final int LEVEL4STATE = 6;
-	
+	public static final int LEVEL5STATE = 7;
+	public static final int LEVEL6STATE = 8;
+	public static final int LEVEL7STATE = 9;
+	public static final int LEVEL8STATE = 10;
+	public static final int CREDITSSTATE = 11;
 	
 	public GameStateManager() {
 		
@@ -74,6 +78,26 @@ public class GameStateManager {
 			gameStates[state] = new Level4State(this);
 		}
 		
+		if(state == LEVEL5STATE){
+			gameStates[state] = new Level5State(this);
+		}
+		
+		if(state == LEVEL6STATE){
+			gameStates[state] = new Level6State(this);
+		}
+		
+		if(state == LEVEL7STATE){
+			gameStates[state] = new Level7State(this);
+		}
+		
+		if(state == LEVEL8STATE){
+			gameStates[state] = new Level8State(this);
+		}
+		
+		if(state == CREDITSSTATE){
+			gameStates[state] = new CreditsState(this);
+		}
+		
 	}
 	
 	private void unloadState(int state) {
@@ -105,6 +129,12 @@ public class GameStateManager {
 				JukeBox.stop("level1");
 			}else{
 				JukeBox.resume("level1", true);
+			}
+		}else if(currentState == LEVEL7STATE){
+			if(b){
+				JukeBox.stop("boss1");
+			}else{
+				JukeBox.resume("boss1", true);
 			}
 		}else{
 			if(b){

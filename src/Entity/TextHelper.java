@@ -18,7 +18,7 @@ public class TextHelper{
 		x = myX;
 		y = myY;
 		color = c;
-		font = new Font("Lucida Console", Font.PLAIN, 8);
+		font = new Font("Arial", Font.PLAIN, 9);
 		
 	}
 	

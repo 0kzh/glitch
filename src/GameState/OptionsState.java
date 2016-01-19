@@ -18,7 +18,7 @@ public class OptionsState extends GameState {
 	private Background bg;
 	
 	private static int currentChoice = 0;
-	private String[] keys = {"Jump: ", "Shoot: ", "Left: ", "Right: ", "Mute: ", "<- Back"};
+	private String[] keys = {"Jump: ", "Left: ", "Right: ", "<- Back"};
 	private boolean buttonPressed = false;
 	private static boolean enterPressed = false;
 	
@@ -52,6 +52,7 @@ public class OptionsState extends GameState {
 			icon = new ImageIcon(f.toURI().toURL()).getImage();
 			JukeBox.load("/SFX/option.mp3", "option");
 			JukeBox.load("/SFX/select.wav", "select");
+			JukeBox.load("/Music/menu.mp3", "menu");
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -60,7 +61,7 @@ public class OptionsState extends GameState {
 	}
 	
 	private static boolean checkConflicting(int key){
-		if(key == Keys.keyZ || key == Keys.keyX || key == Keys.keyLeft || key == Keys.keyRight){
+		if(key == Keys.keyZ || key == Keys.keyUp || key == Keys.keyDown ||key == Keys.keyLeft || key == Keys.keyRight){
 			return true;
 		}
 		return false;
@@ -93,12 +94,8 @@ public class OptionsState extends GameState {
 				g.drawImage(icon, 110, 123, null);
 			}else if(currentChoice == 2){
 				g.drawImage(icon, 110, 138, null);
-			}else if(currentChoice == 3){
-				g.drawImage(icon, 110, 153, null);
-			}else if(currentChoice == 4){
-				g.drawImage(icon, 110, 168, null);
 			}
-			if(i != 5) g.drawString(keys[i], 135, 120 + i * 15);
+			if(i != 3) g.drawString(keys[i], 135, 120 + i * 15);
 			if(i == 0){
 				if(currentChoice == 0 && reading){
 					g.drawString("Press a key...", 180, 120 + i * 15);
@@ -106,26 +103,18 @@ public class OptionsState extends GameState {
 					g.drawString(KeyEvent.getKeyText(Keys.keyZ), 180, 120 + i * 15);
 				}
 			}else if(i == 1){
-				if(currentChoice == 1 && reading){
-					g.drawString("Press a key...", 180, 120 + i * 15);
-				}else{
-					g.drawString(KeyEvent.getKeyText(Keys.keyX), 180, 120 + i * 15);
-				}
-			}else if(i == 2){
 				if(currentChoice == 2 && reading){
 					g.drawString("Press a key...", 180, 120 + i * 15);
 				}else{
 					g.drawString(KeyEvent.getKeyText(Keys.keyLeft), 180, 120 + i * 15);
 				}
-			}else if(i == 3){
+			}else if(i == 2){
 				if(currentChoice == 3 && reading){
 					g.drawString("Press a key...", 180, 120 + i * 15);
 				}else{
 					g.drawString(KeyEvent.getKeyText(Keys.keyRight), 180, 120 + i * 15);
 				}
-			}else if(i == 4){
-					g.drawString(Boolean.toString(JukeBox.isMuted()), 180, 120 + i * 15);
-			}else if(i == 5){
+			}else if(i == 3){
 				g.drawString(keys[i], 135, 220);
 			}
 		}
@@ -147,23 +136,7 @@ public class OptionsState extends GameState {
 			}
 			
 		}
-		
 		else if(currentChoice == 1){
-			// key x
-			if(!reading && keyPress == 0){
-				reading = true;
-			}
-			
-			if(keyPress != 0){
-				if(keyPress != KeyEvent.VK_ENTER){
-					if(!checkConflicting(keyPress)) Keys.keyX = keyPress;
-				}
-				keyPress = 0;
-				reading = false;
-			}
-		}
-		
-		else if(currentChoice == 2){
 			// left
 			if(!reading && keyPress == 0){
 				reading = true;
@@ -179,7 +152,7 @@ public class OptionsState extends GameState {
 			
 		}
 		
-		else if(currentChoice == 3){
+		else if(currentChoice == 2){
 			// right
 			if(!reading && keyPress == 0){
 				reading = true;
@@ -194,15 +167,7 @@ public class OptionsState extends GameState {
 			}
 		}
 		
-		else if(currentChoice == 4){
-			// mute
-			if(!enterPressed){
-				enterPressed = true;
-				JukeBox.mute(!JukeBox.isMuted());
-			}
-		}
-		
-		else if (currentChoice == 5){
+		else if (currentChoice == 3){
 			// back
 			gsm.setState(GameStateManager.MENUSTATE);
 			

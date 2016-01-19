@@ -2,14 +2,9 @@ package GameState;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
-
 import GameState.GameStateManager;
-
 import Handlers.Keys;
-
 import Entity.*;
-import Entity.Enemies.*;
 import Main.GamePanel;
 import TileMap.*;
 import Audio.JukeBox;
@@ -22,8 +17,8 @@ public class Level4State extends GameState{
 	private FillScreen fs;
 	
 	private DialogBox dbox1;
-	private TextPlayer player;
-	private TextHelper[] messages = {new TextHelper("DROP, JUMP, JUMP!", 177, 29, Color.WHITE)};
+	private Player player;
+	private TextHelper[] messages = {new TextHelper("You'll probably hit your head.", 145, 29, Color.WHITE)};
 	private int index2 = 0;
 	private boolean talking;
 	private boolean pauseKeyPressed;
@@ -44,12 +39,12 @@ public class Level4State extends GameState{
 		//initialize tile map
 		tileMap = new TileMap(16);
 		tileMap.loadTiles("/Tilesets/texttileset.png");
-		tileMap.loadMap("/Maps/level3.map");
+		tileMap.loadMap("/Maps/level4.map");
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
 		
 		bg = new Background("/Backgrounds/level1bg.png", 0.1);
-		player = new TextPlayer(tileMap);
+		player = new Player(tileMap);
 		//player.setSpawnPoint(489, 55);
 		//player.setPosition(489, 55);
 		player.setSpawnPoint(39, 215);
@@ -65,6 +60,7 @@ public class Level4State extends GameState{
 		
 	}
 
+	@SuppressWarnings("static-access")
 	public void update() {
 		
 		long elapsed = (System.nanoTime() - timePassed) / 1000000;
@@ -77,8 +73,10 @@ public class Level4State extends GameState{
 			}
 			
 			if(player.tl == Tile.TERMINAL || player.tr == Tile.TERMINAL || player.bl == Tile.TERMINAL || player.br == Tile.TERMINAL){
-				JukeBox.play("next");
-				gsm.setState(GameStateManager.LEVEL3STATE);
+				if(player.teleported){
+					gsm.setState(GameStateManager.LEVEL5STATE);
+					player.teleported = false;
+				}
 			}
 			
 			tileMap.setPosition(

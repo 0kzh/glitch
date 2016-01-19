@@ -2,14 +2,9 @@ package GameState;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
-
 import GameState.GameStateManager;
-
 import Handlers.Keys;
-
 import Entity.*;
-import Entity.Enemies.*;
 import Main.GamePanel;
 import TileMap.*;
 import Audio.JukeBox;
@@ -23,7 +18,7 @@ public class Level1State extends GameState{
 	private DialogBox dbox;
 	private DialogBox dbox2;
 	private DialogBox dbox1;
-	private TextPlayer player;
+	private Player player;
 	private DialogBox[] dialog = {
 			new DialogBox("JUST KIDDING.", 3, true), 
 			new DialogBox("THAT CAT JUST KILLED YOU.", 3), 
@@ -51,6 +46,7 @@ public class Level1State extends GameState{
 	
 	public void init() {
 		//initialize tile map
+		fs = new FillScreen(Color.BLACK);
 		tileMap = new TileMap(16);
 		tileMap.loadTiles("/Tilesets/texttileset.png");
 		tileMap.loadMap("/Maps/level1.map");
@@ -58,7 +54,7 @@ public class Level1State extends GameState{
 		tileMap.setTween(1);
 		
 		bg = new Background("/Backgrounds/level1bg.png", 0.1);
-		player = new TextPlayer(tileMap);
+		player = new Player(tileMap);
 		//player.setSpawnPoint(489, 55);
 		//player.setPosition(489, 55);
 		player.setSpawnPoint(41, 212);
@@ -74,7 +70,6 @@ public class Level1State extends GameState{
 	}
 	private void printDialogue() {
 		if(index < dialog.length){
-			fs = new FillScreen(Color.BLACK);
 			dbox = dialog[index];
 			JukeBox.stop("level1");
 			talking = true;
@@ -94,6 +89,7 @@ public class Level1State extends GameState{
 		
 	}
 
+	@SuppressWarnings("static-access")
 	public void update() {
 		// check keys
 		

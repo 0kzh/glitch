@@ -1,15 +1,11 @@
 package GameState;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.util.ArrayList;
-
 import GameState.GameStateManager;
-
 import Handlers.Keys;
-
 import Entity.*;
-import Entity.Enemies.*;
 import Main.GamePanel;
 import TileMap.*;
 import Audio.JukeBox;
@@ -22,15 +18,15 @@ public class Level0State extends GameState{
 	private FillScreen fs;
 	private DialogBox dbox;
 	private DialogBox dbox1;
-	private TextPlayer player;
-	private TextHelper[] messages = {new TextHelper("Z", 195, 181, Color.WHITE), new TextHelper("DOUBLE JUMP!", 235, 135, Color.WHITE)};
+	private Player player;
+	private TextHelper[] messages = {new TextHelper("Z", 195, 181, Color.WHITE), new TextHelper("Double Jump!", 230, 135, Color.WHITE)};
 	//private ArrayList<Explosion> explosions; 
 	private DialogBox[] dialog = {
 			new DialogBox("Greetings Player! Welcome to GLITCH!", 2), 
 			new DialogBox("I'm Bill, and I will be your guide today!", 2), 
 			new DialogBox("And now... for the controls:", 2),
 			new DialogBox("Use the arrow keys to move!", 2),
-			new DialogBox("Press Z to jump!", 2)}; 
+			new DialogBox("Press " + KeyEvent.getKeyText(Keys.keyZ) +" to jump!", 2)}; 
 	private int index;
 	private int index2 = 0;
 	private boolean keyPressed;
@@ -53,6 +49,13 @@ public class Level0State extends GameState{
 	
 	public void init() {
 		//initialize tile map
+		fs = new FillScreen(Color.BLACK);
+		
+		if(!KeyEvent.getKeyText(Keys.keyLeft).equals("Left") || !KeyEvent.getKeyText(Keys.keyRight).equals("Right")){
+			dialog[3] = new DialogBox("Use " + KeyEvent.getKeyText(Keys.keyLeft) + " and " + KeyEvent.getKeyText(Keys.keyRight) + " to move!", 2);
+		}
+		
+		//load and initialize tilemap & background
 		tileMap = new TileMap(16);
 		tileMap.loadTiles("/Tilesets/tileset.png");
 		tileMap.loadMap("/Maps/intro.map");
@@ -60,13 +63,11 @@ public class Level0State extends GameState{
 		tileMap.setTween(1);
 		
 		bg = new Background("/Backgrounds/gamebg.png", 0.1);
-		player = new TextPlayer(tileMap);
-		//player.setSpawnPoint(489, 55);
-		//player.setPosition(489, 55);
+		player = new Player(tileMap);
 		player.setSpawnPoint(35, 206);
 		player.setPosition(35, 206);
-		//hud = new HUD(player);
 		
+		//load musics
 		JukeBox.load("/Music/bg.mp3", "bg");
 		JukeBox.load("/SFX/press.mp3", "press");
 		JukeBox.loop("bg", 600, JukeBox.getFrames("bg") - 2200);
@@ -75,7 +76,6 @@ public class Level0State extends GameState{
 	
 	private void printDialogue() {
 		if(index < dialog.length){
-			fs = new FillScreen(Color.BLACK);
 			dbox = dialog[index];
 			JukeBox.stop("bg");
 			talking = true;
@@ -139,6 +139,7 @@ public class Level0State extends GameState{
 	}
 
 	
+	@SuppressWarnings("static-access")
 	public void draw(Graphics2D g) {
 		
 		//draw bg

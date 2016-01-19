@@ -24,13 +24,12 @@ public class MenuState extends GameState {
 	private Background bg;
 	
 	private int currentChoice = 0;
-	private String[] options = {"New", "Load", "Options", "Quit"};
-	private String copyright = "2015 Kelvin Zhang";
-	private String version = "Version 1.0";
+	private String[] options = {"New", "Load", "Controls", "Quit"};
+	private String copyright = "2016 Kelvin Zhang";
+	private String version = "Version 1.1";
 	private boolean buttonPressed = false;
 	BufferedImage logo;
-	File f = new File("pointer.png");
-	Image icon;
+	BufferedImage icon;
 	
 	private Font font;
 	
@@ -48,13 +47,14 @@ public class MenuState extends GameState {
 		try{
 			
 			bg = new Background("/Backgrounds/menubg.gif", 1);
-			//bg.setVector(-0.1, 0);
 			
 			font = new Font("Arial", Font.PLAIN, 12);
-			logo = ImageIO.read(new File("Resources/Backgrounds/logo.png"));
-			icon = new ImageIcon(f.toURI().toURL()).getImage();
+			logo = ImageIO.read(getClass().getResourceAsStream("/Backgrounds/logo.png"));
+			icon = ImageIO.read(getClass().getResourceAsStream("/Backgrounds/pointer.png"));
 			JukeBox.load("/SFX/option.mp3", "option");
 			JukeBox.load("/SFX/select.wav", "select");
+			JukeBox.load("/Music/menu.mp3", "menu");
+			if(!JukeBox.isPlaying("menu")) JukeBox.loop("menu", 600, JukeBox.getFrames("menu") - 2200);
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -102,6 +102,7 @@ public class MenuState extends GameState {
 	}
 
 	private void select(){
+		
 		if(currentChoice == 0){
 			//new game
 			
@@ -110,6 +111,7 @@ public class MenuState extends GameState {
 				Writer wr = new BufferedWriter(new FileWriter("save.txt"));
 				wr.append("2");
 				wr.close();
+				JukeBox.stop("menu");
 			}
 			catch (IOException e) {
 				e.printStackTrace();
@@ -124,6 +126,7 @@ public class MenuState extends GameState {
 					gsm.setState(in.nextInt());
 				}
 				in.close();
+				JukeBox.stop("menu");
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -136,6 +139,7 @@ public class MenuState extends GameState {
 		
 		if(currentChoice == 3){
 			//exit
+			JukeBox.stop("menu");
 			System.exit(0);
 		}
 	}

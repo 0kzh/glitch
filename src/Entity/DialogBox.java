@@ -3,10 +3,12 @@ package Entity;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import Main.GamePanel;
 import Audio.JukeBox;
+import Handlers.Keys;
 
 public class DialogBox{
 	
@@ -22,6 +24,7 @@ public class DialogBox{
 	public static final int PLAYER = 0;
 	public static final int TEXT_PLAYER = 1;
 	public static final int CONSOLE = 2;
+	public static String nextKey;
 	
 	public DialogBox(String s, int character){
 		
@@ -39,9 +42,18 @@ public class DialogBox{
 				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar2.png"));
 			}else if(character == 4){
 				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar3.png"));
+			}else if(character == 5){
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar4.png"));
+			}else if(character == 6){
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar5.png"));
+			}else if(character == 7){
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar6.png"));
+			}else if(character == 8){
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/silhouette.png"));
 			}
 			
 			font = new Font("Arial", Font.PLAIN, 11);
+			nextKey = KeyEvent.getKeyText(Keys.keyZ);
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -65,6 +77,14 @@ public DialogBox(String s, int character, boolean bold){
 				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar2.png"));
 			}else if(character == 4){
 				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar3.png"));
+			}else if(character == 5){
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar4.png"));
+			}else if(character == 6){
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar5.png"));
+			}else if(character == 7){
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar6.png"));
+			}else if(character == 8){
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/silhouette.png"));
 			}
 			
 			if(bold) font = new Font("Arial", Font.BOLD, 11);
@@ -91,6 +111,8 @@ public DialogBox(String s, int character, boolean bold){
 		g.setFont(font);
 		g.setColor(Color.WHITE);
 		g.drawString(myString, 75, GamePanel.HEIGHT - 35);
+		g.setFont(new Font("Arial", Font.BOLD, 9));
+		g.drawString("[" + nextKey + "]", GamePanel.WIDTH - 40, GamePanel.HEIGHT - 25);
 		if(i >= toPrint.length - 1){
 			i = toPrint.length - 1;
 			done = true;

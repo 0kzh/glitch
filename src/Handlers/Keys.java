@@ -12,30 +12,28 @@ public class Keys{
 	
 	public static boolean keyState[] = new boolean[NUM_KEYS];
 	public static boolean prevKeyState[] = new boolean[NUM_KEYS];
-	public static boolean shot = false;
 	
 	public static int UP = 0;
 	public static int LEFT = 1;
 	public static int DOWN = 2;
 	public static int RIGHT = 3;
 	public static int BUTTON1 = 4;
-	public static int BUTTON2 = 5;
 	public static int ENTER = 6;
 	public static int ESCAPE = 7;
 	
+	public static int keyUp = KeyEvent.VK_UP;
+	public static int keyDown = KeyEvent.VK_DOWN;
 	public static int keyLeft = KeyEvent.VK_LEFT;
 	public static int keyRight = KeyEvent.VK_RIGHT;
 	public static int keyZ = KeyEvent.VK_Z;
-	public static int keyX = KeyEvent.VK_X;
 	
 	
 	public static void keySet(int i, boolean b) {
-		if(i == KeyEvent.VK_UP) keyState[UP] = b;
+		if(i == keyUp) keyState[UP] = b;
 		else if(i == keyLeft) keyState[LEFT] = b;
-		else if(i == KeyEvent.VK_DOWN) keyState[DOWN] = b;
+		else if(i == keyDown) keyState[DOWN] = b;
 		else if(i == keyRight) keyState[RIGHT] = b;
 		else if(i == keyZ) keyState[BUTTON1] = b;
-		else if(i == keyX) keyState[BUTTON2] = b;
 		else if(i == KeyEvent.VK_ENTER) keyState[ENTER] = b;
 		else if(i == KeyEvent.VK_ESCAPE) keyState[ESCAPE] = b;
 	}
@@ -47,21 +45,7 @@ public class Keys{
 	}
 	
 	public static boolean isPressed(int i) {
-		if(keyState[BUTTON2]){
-			if(shot == true){
-				return false;
-			}else{			
-				if(keyState[DOWN] || keyState[UP]){
-					shot = false;
-				}else{
-					shot = true;
-				}
-				return keyState[i] && !prevKeyState[i];
-			}
-		}else{
-			shot = false;
-			return keyState[i] && !prevKeyState[i];
-		}
+		return keyState[i] && !prevKeyState[i];
 	}
 	
 	public static boolean anyKeyPress() {

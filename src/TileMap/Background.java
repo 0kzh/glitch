@@ -11,7 +11,7 @@ public class Background {
 	private BufferedImage image;
 	
 	private double x;
-	private double y;
+	public double y;
 	private double dx;
 	private double dy;
 	

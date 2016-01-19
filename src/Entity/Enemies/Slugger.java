@@ -24,7 +24,7 @@ public class Slugger extends Enemy{
 		width = 16;
 		height = 16;
 		cwidth = 13;
-		cheight = 13;
+		cheight = 5;
 		
 		health = maxHealth = 2;
 		damage = 1;
@@ -32,9 +32,9 @@ public class Slugger extends Enemy{
 		// load sprites
 		try{
 			
-			BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream("/Sprites/Enemies/slime.png"));
+			BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream("/Sprites/Enemies/worm.png"));
 			
-			sprites = new BufferedImage[3];
+			sprites = new BufferedImage[4];
 			for(int i = 0; i < sprites.length; i++){
 				sprites[i] = spritesheet.getSubimage(i * width, 0, width, height);
 			}
@@ -45,7 +45,7 @@ public class Slugger extends Enemy{
 		
 		animation = new Animation();
 		animation.setFrames(sprites);
-		animation.setDelay(300);
+		animation.setDelay(200);
 		
 		right = true;
 		facingRight = true;
