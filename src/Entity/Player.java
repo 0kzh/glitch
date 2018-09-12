@@ -59,7 +59,6 @@ public class Player extends MapObject{
 		jumpStart = -4;
 		stopJumpSpeed = 0.2;
 		doubleJumpStart = -3.8;
-		
 		facingRight = true;
 		
 		health = maxHealth = 5;
@@ -106,7 +105,6 @@ public class Player extends MapObject{
 	public void setSpawnPoint(int i, int j){
 		spawnX = i;
 		spawnY = j;
-		
 	}
 	
 	public void setJumping(boolean b) {
@@ -153,7 +151,8 @@ public class Player extends MapObject{
 				}
 			}
 		}
-		
+
+		//jumping normally
 		if(jumping && !falling) {
 			dy = jumpStart;
 			falling = true;
@@ -161,7 +160,8 @@ public class Player extends MapObject{
 			
 			JukeBox.play("jump");
 		}
-		
+
+		//walking off a platform
 		if(jumping && falling && !hasJumped){
 			dy = jumpStart;
 			falling = true;
@@ -169,6 +169,7 @@ public class Player extends MapObject{
 			
 			JukeBox.play("jump");
 		}
+
 		//double jump
 		if(doubleJump) {
 			dy = doubleJumpStart;
@@ -179,10 +180,10 @@ public class Player extends MapObject{
 		
 		if(falling){
 			dy += fallSpeed;
-			
+			hasJumped = true;
 			if(dy > 0) jumping = false;
-			if(dy < 0 && !jumping) dy += stopJumpSpeed;
-			if(dy > maxFallSpeed) dy = maxFallSpeed;
+//			if(dy < 0 && !jumping) dy += stopJumpSpeed;
+			if(dy > maxFallSpeed) dy = maxFallSpeed; //terminal velocity
 		}else{
 			alreadyDoubleJump = false;
 			hasJumped = false;
@@ -254,6 +255,8 @@ public class Player extends MapObject{
 			if(animation.getFrame() >= 5){
 				Level0State.playedOnce = true;
 				tileMap.setShaking(false, 0);
+				tileMap.setInvisible(false);
+				tileMap.resetCounter();
 				respawn();
 				if(tileMap.fs != null){
 					if(!tileMap.fs.shouldRemove()) tileMap.fs.setRemove(true);

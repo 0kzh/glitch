@@ -18,7 +18,7 @@ public class Level4State extends GameState{
 	
 	private DialogBox dbox1;
 	private Player player;
-	private TextHelper[] messages = {new TextHelper("You'll probably hit your head.", 145, 29, Color.WHITE)};
+	private TextHelper[] messages = new TextHelper[1];
 	private int index2 = 0;
 	private boolean talking;
 	private boolean pauseKeyPressed;
@@ -28,20 +28,21 @@ public class Level4State extends GameState{
 	public Level4State(GameStateManager gsm){
 		super(gsm);
 		init();
-		try {
+		try{
 			gsm.save();
-		} catch (IOException e) {
+		}catch(IOException e){
 			e.printStackTrace();
 		}
 	}
 	
-	public void init() {
+	public void init(){
 		//initialize tile map
 		tileMap = new TileMap(16);
 		tileMap.loadTiles("/Tilesets/texttileset.png");
 		tileMap.loadMap("/Maps/level4.map");
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
+		messages[0] = new TextHelper(tileMap, "You'll probably hit your head.", 145, 29, Color.WHITE);
 		
 		bg = new Background("/Backgrounds/level1bg.png", 0.1);
 		player = new Player(tileMap);
@@ -61,7 +62,7 @@ public class Level4State extends GameState{
 	}
 
 	@SuppressWarnings("static-access")
-	public void update() {
+	public void update(){
 		
 		long elapsed = (System.nanoTime() - timePassed) / 1000000;
 		if(elapsed > 500) player.dboxFinish = false;
@@ -96,7 +97,7 @@ public class Level4State extends GameState{
 	}
 
 	
-	public void draw(Graphics2D g) {
+	public void draw(Graphics2D g){
 		
 		//draw bg
 		bg.draw(g);
@@ -105,7 +106,7 @@ public class Level4State extends GameState{
 		tileMap.draw(g);
 		
 		//draw messages
-		if(!(player.getHealth() <= 0)){
+		if(!(player.getHealth() <= 0) && !tileMap.isInvisible()){
 			for(int i = 0; i < messages.length; i++){
 				messages[i].draw(g);
 			}
@@ -142,7 +143,7 @@ public class Level4State extends GameState{
 		}
 	}
 	
-	public void handleInput() {
+	public void handleInput(){
 		
 		if(Keys.isPressed(Keys.ESCAPE)){
 			if(!pauseKeyPressed){

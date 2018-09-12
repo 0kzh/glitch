@@ -15,18 +15,20 @@ public class Level6State extends GameState{
 	private TileMap tileMap;
 	private Background bg;
 	private Console console;
-	private FillScreen fs;
 	
 	private DialogBox dbox;
 	private Player player;
 	private ArrayList<Enemy> enemies;
+	private int[] checkpoints = {136, 272, 408, 544, 680, 816, 952};
 	private DialogBox[] dialog = {
-			new DialogBox("He- hey! Wait a minute!", 6), 
-			new DialogBox("What are you doing in this room?", 6), 
-			new DialogBox("Umm, whatever you do, don't-", 5),
-			new DialogBox("touch those portals over there.", 5)};
+			new DialogBox("...", 3), 
+			new DialogBox("You're persistent, aren't you?", 3), 
+			new DialogBox("Fine then. I'll deal with you myself.", 3),
+			new DialogBox("You know, it's never too late to give up.", 3),
+			new DialogBox("You can still quit this game at any time.", 3),
+			new DialogBox("But if you really want to commit suicide...", 3),
+			new DialogBox("Be my guest.", 3)};
 	private int index;
-	private int index2 = 0;
 	private boolean talking;
 	private boolean keyPressed;
 	private boolean pauseKeyPressed;
@@ -38,15 +40,14 @@ public class Level6State extends GameState{
 	public Level6State(GameStateManager gsm){
 		super(gsm);
 		init();
-		try {
+		try{
 			gsm.save();
-		} catch (IOException e) {
+		}catch(IOException e){
 			e.printStackTrace();
 		}
 	}
 	
-	public void init() {
-		fs = new FillScreen(Color.BLACK);
+	public void init(){
 		//initialize tile map
 		tileMap = new TileMap(16);
 		tileMap.loadTiles("/Tilesets/texttileset.png");
@@ -68,26 +69,26 @@ public class Level6State extends GameState{
 		JukeBox.load("/Music/bg.mp3", "bg");
 		JukeBox.load("/SFX/press.mp3", "press");
 		JukeBox.load("/SFX/level.mp3", "next");
-		if(!JukeBox.isPlaying("bg")) JukeBox.loop("bg", 600, JukeBox.getFrames("bg") - 2200);
+		JukeBox.stop("bg");
+//		if(!JukeBox.isPlaying("bg")) JukeBox.loop("bg", 600, JukeBox.getFrames("bg") - 2200);
 		
 	}
 	
-	private void printDialogue() {
+	private void printDialogue(){
 		if(index < dialog.length){
-			dbox = dialog[index];
-			JukeBox.stop("bg");
-			talking = true;
-		}else{
-			if(!fs.shouldRemove()){
-				fs.setRemove(true);
+			if(player.getx() > checkpoints[index]){
+				talking = true;
+				dbox = dialog[index];
+				dbox.setRemove(false);
+				index++;
 			}
+		}else{
 			if(dbox.shouldRemove()) talking = false;
 		}
-		
 	}
 
 	@SuppressWarnings("static-access")
-	public void update() {
+	public void update(){
 		
 		if(dialogue) printDialogue();
 			
@@ -98,7 +99,7 @@ public class Level6State extends GameState{
 			enemies.get(i).update();
 		}
 		
-		if(!talking && JukeBox.isPlaying("bg")){
+		if(!talking && dialogue){
 			if(console == null){
 				handleInput();
 				player.update();
@@ -129,7 +130,7 @@ public class Level6State extends GameState{
 	}
 
 	
-	public void draw(Graphics2D g) {
+	public void draw(Graphics2D g){
 		
 		//draw bg
 		bg.draw(g);
@@ -151,21 +152,6 @@ public class Level6State extends GameState{
 		//hud.draw(g);
 		
 		try{
-			if(!fs.shouldRemove()){
-				fs.draw(g);
-			}else{
-				if(index2 < 30){
-					g.setColor(Color.BLACK);
-					g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT / 2 - (index2 * GamePanel.HEIGHT / 60));
-					g.fillRect(0, GamePanel.HEIGHT / 2 + (index2 * GamePanel.HEIGHT / 60), GamePanel.WIDTH, GamePanel.HEIGHT / 2);
-					Thread.sleep(10);
-					index2++;
-				
-				}else{
-					JukeBox.resume("bg", true);
-				}
-			}
-			
 			if(!dbox.shouldRemove()){
 				dbox.draw(g);
 				if(Keys.isPressed(Keys.BUTTON1) && !keyPressed && dbox.isDone()){
@@ -175,16 +161,15 @@ public class Level6State extends GameState{
 				}else if(!Keys.isPressed(Keys.BUTTON1)){
 					keyPressed = false;
 				}
-			}
-			else if(index < dialog.length){
-				index++;
+			}else{
+				talking = false;
 			}
 			
 		}catch(Exception e){
 		}
 	}
 	
-	public void handleInput() {
+	public void handleInput(){
 		
 		if(Keys.isPressed(Keys.ESCAPE)){
 			if(!pauseKeyPressed){

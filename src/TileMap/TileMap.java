@@ -4,6 +4,9 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import javax.imageio.ImageIO;
+
+import Audio.JukeBox;
+import Entity.DialogBox;
 import Entity.FillScreen;
 import Main.GamePanel;
 
@@ -12,6 +15,8 @@ public class TileMap {
 	// position
 	private double x;
 	private double y;
+	private double xtemp;
+	private double ytemp;
 	
 	// bounds
 	private int xmin;
@@ -23,6 +28,7 @@ public class TileMap {
 	private double tween;
 	
 	// map
+	private String loadedMap;
 	private int[][] map;
 	private int tileSize;
 	private int numRows;
@@ -42,11 +48,18 @@ public class TileMap {
 	private int numColsToDraw;
 	
 	private boolean shaking;
+	private boolean invisible;
 	private int intensity;
 	public static FillScreen fs;
+	private BufferedImage[] sides;
+	
+	//timekeeping
+	private long elapsed;
+	private long timePassed;
 	
 	public TileMap(int tileSize){
 		this.tileSize = tileSize;
+		sides = new BufferedImage[6];
 		numRowsToDraw = GamePanel.HEIGHT / tileSize + 2;
 		numColsToDraw = GamePanel.WIDTH / tileSize + 2;
 		tween = 0.07;
@@ -66,7 +79,7 @@ public class TileMap {
 				subimage = tileset.getSubimage(col * tileSize, 0, tileSize, tileSize);
 				if(s.equals("/Tilesets/texttileset.png") || s.equals("/Tilesets/tileset.png")){
 					if(col == 2){
-						tiles[0][col] = new Tile(subimage, Tile.PLATFORM);
+						tiles[0][col] = new Tile(subimage, Tile.BLOCKED);
 					}else if(col == 4){
 						tiles[0][col] = new Tile(subimage, Tile.TERMINAL);
 					}else if(col == 3){
@@ -87,7 +100,9 @@ public class TileMap {
 				}else{
 					tiles[1][col] = new Tile(subimage, Tile.BLOCKED);
 				}
-				
+			}
+			for(int col = 0; col < 6; col++){
+				sides[col] = tileset.getSubimage(col * tileSize, tileSize, tileSize, tileSize);
 			}
 			
 		}catch(Exception e){
@@ -96,7 +111,7 @@ public class TileMap {
 	}
 	
 	public void loadMap(String s){
-		
+		loadedMap = s;
 		try{
 			InputStream in = getClass().getResourceAsStream(s);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -122,6 +137,7 @@ public class TileMap {
 				}
 			}
 			loaded = true;
+			timePassed = 0;
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -137,6 +153,8 @@ public class TileMap {
 	public int getNumCols() { return numCols; }
 	public boolean isLoaded() { return loaded; }
 	public boolean isShaking() { return shaking; }
+	public boolean isInvisible() { return invisible; }
+	public void resetCounter() { timePassed = 0; }
 	
 	public int getType(int row, int col){
 		int rc = map[row][col];
@@ -157,6 +175,10 @@ public class TileMap {
 	public void setShaking(boolean b, int i) { 
 		shaking = b;
 		intensity = i; 
+	}
+	
+	public void setInvisible(boolean b){
+		invisible = b;
 	}
 	
 	public void setPosition(double x, double y){
@@ -180,13 +202,28 @@ public class TileMap {
 	}
 	
 	public void update(){
-		if(shaking) {
-			//fs = new FillScreen(Color.WHITE);
-			
-			this.x += Math.random() * intensity - intensity / 2;
-			this.y += Math.random() * intensity - intensity / 2;
-			
-		}else{
+		if(!loadedMap.contains("intro.map") && !loadedMap.contains("level6.map") && !loadedMap.contains("level8.map")){
+			if(timePassed == 0) timePassed = System.nanoTime();
+			long elapsed = (System.nanoTime() - timePassed) / 1000000;
+			if(elapsed > 2200){
+				setShaking(false, 0);
+				setInvisible(true);
+				if(loadedMap.contains("level7.map")){
+					if(elapsed > 4000){
+						setShaking(true, 2);
+					}
+					
+					if(elapsed > 4200){
+						setShaking(false, 0);
+						setInvisible(false);
+						timePassed = System.nanoTime();
+						x = xtemp;
+						y = ytemp;
+					}
+				}
+			}else if(elapsed > 2000 && !invisible){
+				setShaking(true, 2);
+			}
 		}
 	}
 	
@@ -202,8 +239,31 @@ public class TileMap {
 				int rc = map[row][col];
 				int r = rc / numTilesAcross;
 				int c = rc % numTilesAcross;
-				
-				g.drawImage(tiles[r][c].getImage(), (int)x + col * tileSize, (int)y + row * tileSize, null);
+//				if(row == 0 || col == 0 || row == numRows-1 || col == numCols-1 || ){
+				xtemp = x;
+				ytemp = y;
+				if(shaking) {
+//					x += Math.random() * intensity - intensity / 2;
+					y += Math.random() * intensity - intensity / 2;
+				}
+				if(invisible){
+					if(tiles[r][c].getType() == Tile.DAMAGING || tiles[r][c].getType() == Tile.TERMINAL){
+						g.drawImage(tiles[r][c].getImage(), (int)x + col * tileSize, (int)y + row * tileSize, null);
+					}else if(row == 0 || col == 0 || row == numRows-1 || col == numCols-1){
+						BufferedImage img;
+						
+						if(row == 0 && col == 0) img = sides[4];
+						else if(row == 0 && col == numCols-1) img = sides[5];
+						else if(row == numRows-1 && col == 0) img = sides[2];
+						else if(row == numRows-1 && col == numCols-1) img = sides[3];
+						else if(row == 0 || row == numRows-1) img = sides[0];
+						else img = sides[1];
+						
+						g.drawImage(img, (int)x + col * tileSize, (int)y + row * tileSize, null);
+					}
+				}else{
+					g.drawImage(tiles[r][c].getImage(), (int)x + col * tileSize, (int)y + row * tileSize, null);
+				}
 			}
 		}
 		if(fs != null){

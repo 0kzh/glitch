@@ -4,28 +4,29 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
-public class TextHelper{
+import TileMap.TileMap;
+
+public class TextHelper extends MapObject{
 	
 	private Font font;
 	private String myString = "";
 	private Color color;
-	private int x;
-	private int y;
 	
-	public TextHelper(String s, int myX, int myY, Color c){
-		
+	public TextHelper(TileMap tm, String s, int x, int y, Color c){
+		super(tm);
 		myString = s;
-		x = myX;
-		y = myY;
+		this.x = x;
+		this.y = y;
 		color = c;
 		font = new Font("Arial", Font.PLAIN, 9);
 		
 	}
 	
 	public void draw(Graphics2D g){
+		setMapPosition();
 		g.setFont(font);
 		g.setColor(color);
-		g.drawString(myString, x, y);
+		g.drawString(myString, (int) x, (int) y);
 	}
 	
 }

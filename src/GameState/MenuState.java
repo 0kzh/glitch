@@ -3,11 +3,14 @@ package GameState;
 import java.awt.*;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Scanner;
 
@@ -26,7 +29,7 @@ public class MenuState extends GameState {
 	private int currentChoice = 0;
 	private String[] options = {"New", "Load", "Controls", "Quit"};
 	private String copyright = "2016 Kelvin Zhang";
-	private String version = "Version 1.1";
+	private String version = "Version 2.3";
 	private boolean buttonPressed = false;
 	BufferedImage logo;
 	BufferedImage icon;
@@ -38,24 +41,16 @@ public class MenuState extends GameState {
 		
 		super(gsm);
 		
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
-		
 		try{
-			
 			bg = new Background("/Backgrounds/menubg.gif", 1);
 			
 			font = new Font("Arial", Font.PLAIN, 12);
 			logo = ImageIO.read(getClass().getResourceAsStream("/Backgrounds/logo.png"));
 			icon = ImageIO.read(getClass().getResourceAsStream("/Backgrounds/pointer.png"));
 			JukeBox.load("/SFX/option.mp3", "option");
-			JukeBox.load("/SFX/select.wav", "select");
+			JukeBox.load("/SFX/select.mp3", "select");
 			JukeBox.load("/Music/menu.mp3", "menu");
 			if(!JukeBox.isPlaying("menu")) JukeBox.loop("menu", 600, JukeBox.getFrames("menu") - 2200);
-			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -72,6 +67,7 @@ public class MenuState extends GameState {
 	}
 
 	public void draw(Graphics2D g) {
+		
 		bg.draw(g);
 		
 		g.drawImage(logo, 70, 30, null);
@@ -105,29 +101,27 @@ public class MenuState extends GameState {
 		
 		if(currentChoice == 0){
 			//new game
-			
 			gsm.setState(GameStateManager.INTROSTATE);
-			try {
+			try{
 				Writer wr = new BufferedWriter(new FileWriter("save.txt"));
 				wr.append("2");
 				wr.close();
 				JukeBox.stop("menu");
-			}
-			catch (IOException e) {
+			}catch(IOException e){
 				e.printStackTrace();
 			}
 		}
 		
 		if(currentChoice == 1){
 			//load
-			try {
+			try{
 				Scanner in = new Scanner(new File("save.txt"));
 				while(in.hasNextLine()){
 					gsm.setState(in.nextInt());
 				}
 				in.close();
 				JukeBox.stop("menu");
-			} catch (FileNotFoundException e) {
+			}catch(IOException e){
 				e.printStackTrace();
 			}
 		}
@@ -151,7 +145,6 @@ public class MenuState extends GameState {
 			select();
 		}
 		else if(Keys.isPressed(Keys.UP)){
-			
 			if(!buttonPressed){
 				currentChoice--;
 				if(currentChoice == -1){

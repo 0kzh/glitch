@@ -2,9 +2,14 @@ package Main;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.awt.event.*;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+
+import com.apple.eawt.Application;
 
 import Handlers.Keys;
 
@@ -50,7 +55,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		}
 	}
 
-	public void keyPressed(KeyEvent key) {
+	public void keyPressed(KeyEvent key){
 		Keys.keySet(key.getKeyCode(), true);
 		if(OptionsState.reading){
 			OptionsState.keyPress = key.getKeyCode();
@@ -59,15 +64,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		}
 	}
 
-	public void keyReleased(KeyEvent key) {
+	public void keyReleased(KeyEvent key){
 		Keys.keySet(key.getKeyCode(), false);
 	}
 
-	public void keyTyped(KeyEvent key) {
+	public void keyTyped(KeyEvent key){
 		
 	}
 
-	public void run() {
+	public void run(){
 		
 		init();
 		
@@ -76,7 +81,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		long wait;
 		
 		while(running){
-			
 			start = System.nanoTime();
 			
 			update();
@@ -98,24 +102,23 @@ public class GamePanel extends JPanel implements Runnable, KeyListener{
 		
 	}
 
-	private void drawToScreen() {
+	private void drawToScreen(){
 		Graphics g2 = getGraphics();
 		g2.drawImage(image, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
 		g2.dispose();
 	}
 
-	private void draw() {
+	private void draw(){
 		gsm.draw(g);
 	}
 
-	private void update() {
+	private void update(){
 		gsm.update();
 	}
 
-	private void init() {
+	private void init(){
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		g = (Graphics2D) image.getGraphics();
-		
 		
 		running = true;
 		gsm = new GameStateManager();

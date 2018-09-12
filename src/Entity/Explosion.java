@@ -18,7 +18,7 @@ public class Explosion extends MapObject {
 	private int speed;
 	private double diagSpeed;
 	
-	public Explosion(TileMap tm, int x, int y) {
+	public Explosion(TileMap tm, int x, int y){
 		
 		super(tm);
 		
@@ -49,15 +49,15 @@ public class Explosion extends MapObject {
 		animation.setDelay(12);
 		
 		points = new Point[8];
-		for(int i = 0; i < points.length; i++) {
+		for(int i = 0; i < points.length; i++){
 			points[i] = new Point(x, y);
 		}
 		
 	}
 	
-	public void update() {
+	public void update(){
 		animation.update();
-		if(animation.hasPlayedOnce()) {
+		if(animation.hasPlayedOnce()){
 			remove = true;
 		}
 		points[0].x += speed;
@@ -77,9 +77,9 @@ public class Explosion extends MapObject {
 	
 	public boolean shouldRemove() { return remove; }
 	
-	public void draw(Graphics2D g) {
+	public void draw(Graphics2D g){
 		setMapPosition();
-		for(int i = 0; i < points.length; i++) {
+		for(int i = 0; i < points.length; i++){
 			g.drawImage(
 				animation.getImage(),
 				(int) (points[i].x + xmap - width / 2),

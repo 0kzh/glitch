@@ -23,7 +23,7 @@ public class Particle extends MapObject {
 	private float opacity;
 	private Random random = new Random();
 	
-	public Particle(TileMap tm, double x, double y, int dir) {
+	public Particle(TileMap tm, double x, double y, int dir){
 		super(tm);
 		this.x = x;
 		this.y = y;
@@ -31,15 +31,15 @@ public class Particle extends MapObject {
 		double d2 = -Math.random() - 0.8; 
 		opacity = (float) (random.nextFloat() * (1 - 0.6) + 0.6);
 		
-		if(dir == UP) {
+		if(dir == UP){
 			dx = d1;
 			dy = d2;
 		}
-		else if(dir == LEFT) {
+		else if(dir == LEFT){
 			dx = d2;
 			dy = d1;
 		}
-		else if(dir == DOWN) {
+		else if(dir == DOWN){
 			dx = d1;
 			dy = -d2;
 		}
@@ -65,7 +65,7 @@ public class Particle extends MapObject {
 		animation.setDelay(-1);
 	}
 	
-	public void update() {
+	public void update(){
 		x += dx;
 		y += dy;
 		count++;
@@ -74,7 +74,7 @@ public class Particle extends MapObject {
 	
 	public boolean shouldRemove() { return remove; }
 	
-	public void draw(Graphics2D g) {
+	public void draw(Graphics2D g){
 		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
 		super.draw(g);
 		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));

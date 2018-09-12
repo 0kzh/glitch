@@ -20,11 +20,13 @@ public class Level1State extends GameState{
 	private DialogBox dbox1;
 	private Player player;
 	private DialogBox[] dialog = {
-			new DialogBox("JUST KIDDING.", 3, true), 
-			new DialogBox("THAT CAT JUST KILLED YOU.", 3), 
-			new DialogBox("hahaha!", 3),
-			new DialogBox("HaHaHa!!", 3),
-			new DialogBox("HAHAHAHA!11!1!", 3)}; 
+			new DialogBox("!!!", 2),
+			new DialogBox("That was not supposed to happen!", 2),
+			new DialogBox("Are you all right?", 2),
+			new DialogBox("HAHAHA!!!", 3),
+			new DialogBox("YOUR GAME SUCKS!", 3),
+			new DialogBox("LET ME MAKE THINGS...", 3),
+			new DialogBox("A BIT MORE INTERESTING.", 3)}; 
 	private int index;
 	private int index2 = 0;
 	private boolean keyPressed;
@@ -37,9 +39,9 @@ public class Level1State extends GameState{
 	public Level1State(GameStateManager gsm){
 		super(gsm);
 		init();
-		try {
+		try{
 			gsm.save();
-		} catch (IOException e) {
+		}catch(IOException e){
 			e.printStackTrace();
 		}
 	}
@@ -61,27 +63,19 @@ public class Level1State extends GameState{
 		player.setPosition(41, 212);
 		//hud = new HUD(player);
 		
-		if(JukeBox.isPlaying("bg")) JukeBox.stop("bg");
-		JukeBox.load("/Music/bg1.mp3", "level1");
+		JukeBox.load("/Music/bg.mp3", "bg");
 		JukeBox.load("/SFX/press.mp3", "press");
 		JukeBox.load("/SFX/level.mp3", "next");
-		if(!JukeBox.isPlaying("level1")) JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
+		if(!JukeBox.isPlaying("bg")) JukeBox.loop("bg", 600, JukeBox.getFrames("bg") - 2200);
 		
 	}
 	private void printDialogue() {
 		if(index < dialog.length){
 			dbox = dialog[index];
-			JukeBox.stop("level1");
+			JukeBox.stop("bg");
 			talking = true;
 		}else{
 			if(!fs.shouldRemove()){
-				try {
-					Thread.sleep(1000);
-					dbox = new DialogBox("...", 1);
-					talking = true;
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 				fs.setRemove(true);
 			}
 			if(dbox2 == null && dbox.shouldRemove()) talking = false;
@@ -98,15 +92,15 @@ public class Level1State extends GameState{
 		long elapsed = (System.nanoTime() - timePassed) / 1000000;
 		if(elapsed > 500) player.dboxFinish = false;
 		
-		if(!talking && JukeBox.isPlaying("level1")){
+		if(!talking && JukeBox.isPlaying("bg")){
 			if(console == null){
 				handleInput();
 				player.update();
 			}
 			
-			if(player.getx() > 190 && player.gety() > 172){
+			if(tileMap.isInvisible()){
 				if(dbox2 == null){
-					dbox2 = new DialogBox("Where am I?", 1);
+					dbox2 = new DialogBox("Where did everything go!?", 1);
 					talking = true;
 				}
 			}
@@ -180,7 +174,7 @@ public class Level1State extends GameState{
 					index2++;
 				
 				}else{
-					JukeBox.resume("level1", true);
+					JukeBox.resume("bg", true);
 				}
 			}
 			
@@ -193,8 +187,7 @@ public class Level1State extends GameState{
 				}else if(!Keys.isPressed(Keys.BUTTON1)){
 					keyPressed = false;
 				}
-			}
-			else if(index < dialog.length){
+			} else if(index < dialog.length){
 				index++;
 			}
 		}catch(Exception e){

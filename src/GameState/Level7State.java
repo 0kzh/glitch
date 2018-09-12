@@ -21,6 +21,7 @@ public class Level7State extends GameState{
 	private Background bg;
 	private Console console;
 	private FillScreen fs;
+	private FillScreen flash;
 	private boolean fade;
 	private DialogBox dbox;
 	private DialogBox dbox2;
@@ -28,18 +29,25 @@ public class Level7State extends GameState{
 	private ArrayList<Enemy> enemies;
 	private ArrayList<Explosion> explosions;
 	private DialogBox[] dialog = {
-			new DialogBox("I TRICKED YOU AGAIN!!", 3, true),
-			new DialogBox("You humans are foolish creatures.", 3), 
-			new DialogBox("Prepare to face... my greatest creation!", 3), 
-			new DialogBox("THE GATES-O-TRON 5000!", 3), 
-			new DialogBox("*grumble*", 8)};
+			new DialogBox("I must commend you for making it this far.", 3),
+			new DialogBox("But unfortunately for you, this is the end.", 3), 
+			new DialogBox("BEHOLD MY TRUE FORM !", 3, true)};
 	private DialogBox[] dialog1 = {
-			new DialogBox("NO! MY PRECIOUS CREATION!", 4, true),
-			new DialogBox("OKAY OKAY! YOU WIN!", 4), 
-			new DialogBox("I'LL DO ANYTHING! JUST LEAVE -- PLEASE!", 4), 
-			new DialogBox("Only if you get me out of this place.", 1), 
-			new DialogBox("FINE.", 4)};
-	private TextHelper[] messages = {new TextHelper("Drop, Jump, Jump!", 771, 99, Color.WHITE)};
+			new DialogBox("NooooOooOOOooo!!!", 4, true),
+			new DialogBox("I... I DO NOT BELIEVE IT.", 4),
+			new DialogBox("PLEASE, I BEG YOU, LET ME LIVE!", 4),
+			new DialogBox("I'LL DO ANYTHING!", 5), 
+			new DialogBox("I CANNOT GO SO SOON!", 5), 
+			new DialogBox("I STILL HAVE A FAMILY!", 5), 
+			new DialogBox("I STILL WAnt tooo —", 5), 
+			new DialogBox("...", 6), 
+			new DialogBox("Good riddance.", 1), 
+			new DialogBox("", 1), 
+			new DialogBox("Player, I cannot tell you how grateful I am.", 1), 
+			new DialogBox("That virus almost drove me mad.", 1), 
+			new DialogBox("Thanks to you, he is now gone — forever.", 1)};
+	private TextHelper[] messages = new TextHelper[1];
+	private ArrayList<Integer> waitTimes;
 	private int index;
 	private int index2 = 0;
 	private int index3 = 0;
@@ -54,20 +62,24 @@ public class Level7State extends GameState{
 	private int eventCount;
 	private Random r;
 	
+	private Enemy boss;
+	
 	public static boolean dialogue = true;
 	
 	public Level7State(GameStateManager gsm){
 		super(gsm);
 		init();
-		try {
+		try{
 			gsm.save();
-		} catch (IOException e) {
+		}catch(IOException e){
 			e.printStackTrace();
 		}
 	}
 	
 	public void init() {
 		fs = new FillScreen(Color.BLACK);
+		flash = new FillScreen(new Color(255,224,178), 0.8f);
+		flash.setRemove(true);
 		
 		//initialize tile map
 		tileMap = new TileMap(16);
@@ -75,9 +87,10 @@ public class Level7State extends GameState{
 		tileMap.loadMap("/Maps/level7.map");
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
+		messages[0] = new TextHelper(tileMap, "Drop, Jump, Jump!", 825, 130, Color.WHITE);
 		
 		//set background
-		bg = new Background("/Backgrounds/level1bg.png", 0.1);
+		bg = new Background("/Backgrounds/preboss.png", 0.1);
 		
 		//initialize player and set position/spawn
 		player = new Player(tileMap);
@@ -89,15 +102,15 @@ public class Level7State extends GameState{
 		enemies = new ArrayList<Enemy>();
 		
 		//add boss to enemy
-		Enemy boss = new MiniBoss(tileMap);
-		boss.setPosition(0, 120);
+		boss = new MiniBoss(tileMap);
+		boss.setPosition(30, 120);
 		enemies.add(boss);
 		
 		
 		//music stuff
 		if(JukeBox.isPlaying("bg")) JukeBox.stop("bg");
 		
-		JukeBox.load("/Music/boss.mp3", "boss1");
+		JukeBox.load("/Music/boss1.mp3", "boss1");
 		JukeBox.load("/SFX/press.mp3", "press");
 		JukeBox.load("/SFX/level.mp3", "next");
 		JukeBox.load("/SFX/explode.mp3", "explode");
@@ -159,7 +172,42 @@ public class Level7State extends GameState{
 			}
 		}
 		
-		if(eventBossDead) eventBossDead();
+		if(eventBossDead){
+			if(waitTimes == null || waitTimes.isEmpty()){
+				waitTimes = new ArrayList<Integer>();
+				waitTimes.add(30);
+				waitTimes.add(60);
+				waitTimes.add(90);
+				waitTimes.add(120);
+				
+				waitTimes.add(140);
+				waitTimes.add(160);
+				waitTimes.add(180);
+				waitTimes.add(200);
+				
+				waitTimes.add(210);
+				waitTimes.add(220);
+				waitTimes.add(230);
+				waitTimes.add(240);
+				
+				waitTimes.add(245);
+				waitTimes.add(250);
+				waitTimes.add(255);
+				waitTimes.add(260);
+				waitTimes.add(265);
+				waitTimes.add(270);
+				waitTimes.add(275);
+				waitTimes.add(280);
+//				int start = 0;
+//				for(int i = 0; i < 15; i++){
+//					start += (int) (40 - Math.pow(2, 0.59 * (i-6)));
+//					waitTimes.add(start);
+//					System.out.println(start);
+//				}
+			}
+			
+			eventBossDead();
+		}
 		
 		if(!talking && JukeBox.isPlaying("boss1")){
 			
@@ -199,15 +247,27 @@ public class Level7State extends GameState{
 		//draw tilemap
 		tileMap.draw(g);
 		
+		boolean drawEnemy = true;
+		//fade out boss if index >= 7
+		if(index3 >= 7){
+			MiniBoss mBoss = (MiniBoss) boss;
+			if(mBoss.getOpacity() - 0.05f >= 0){
+				mBoss.setOpacity(mBoss.getOpacity()-0.05f);
+			}else{
+				drawEnemy = false;
+			}
+		}
+		
 		if(!(player.getHealth() <= 0)){
 			for(int i = 0; i < enemies.size(); i++){
-				enemies.get(i).draw(g);
+				if(drawEnemy) enemies.get(i).draw(g);
 			}
+			
 			for(int i = 0; i < messages.length; i++){
-				messages[i].draw(g);
+				if(!tileMap.isInvisible()) messages[i].draw(g);
 			}
 		}else{
-			enemies.get(0).setPosition(0, 120);
+			if(drawEnemy) enemies.get(0).setPosition(30, 120);
 		}
 		
 		//draw player
@@ -245,8 +305,7 @@ public class Level7State extends GameState{
 				}else if(!Keys.isPressed(Keys.BUTTON1)){
 					keyPressed = false;
 				}
-			}
-			else if(index < dialog.length){
+			} else if(index < dialog.length){
 				index++;
 			}
 			
@@ -259,8 +318,7 @@ public class Level7State extends GameState{
 				}else if(!Keys.isPressed(Keys.BUTTON1)){
 					keyPressed = false;
 				}
-			}
-			else if(index3 < dialog1.length){
+			} else if(index3 < dialog1.length){
 				index3++;
 			}
 			
@@ -275,25 +333,46 @@ public class Level7State extends GameState{
 				gsm.setState(GameStateManager.LEVEL8STATE);
 			}
 		}
+		
+		if(!flash.shouldRemove()){
+			flash.draw(g);
+		}
 	}
 	
 	public void eventBossDead() {
 		eventCount++;
 		if(eventCount == 1) {
 			JukeBox.stop("boss1");
+			
 		}
-		if(eventCount <= 120 && eventCount % 30 == 0) {
-			tileMap.setShaking(true, 10);
-			explosions.add(new Explosion(tileMap, enemies.get(0).getx(), enemies.get(0).gety()));
-			explosions.add(new Explosion(tileMap, (enemies.get(0).getx() + r.nextInt(40)), (enemies.get(0).gety()) - r.nextInt(120)));
-			explosions.add(new Explosion(tileMap, (enemies.get(0).getx() - r.nextInt(40)), (enemies.get(0).gety()) + r.nextInt(1200)));
+		
+//		int rem = (int) (Math.pow(2, 0.0576*eventCount));
+//		System.out.println(eventCount);
+//		System.out.println(rem);
+		if(eventCount <= 280 && waitTimes.contains(eventCount)) {
+//			explosions.add(new Explosion(tileMap, enemies.get(0).getx(), enemies.get(0).gety()));
 			explosions.add(new Explosion(tileMap, (enemies.get(0).getx() + r.nextInt(40)), (enemies.get(0).gety()) - r.nextInt(120)));
 			explosions.add(new Explosion(tileMap, (enemies.get(0).getx() - r.nextInt(40)), (enemies.get(0).gety()) + r.nextInt(120)));
+			explosions.add(new Explosion(tileMap, (enemies.get(0).getx() + r.nextInt(40)), (enemies.get(0).gety()) - r.nextInt(120)));
+			explosions.add(new Explosion(tileMap, (enemies.get(0).getx() - r.nextInt(40)), (enemies.get(0).gety()) + r.nextInt(120)));
+			explosions.add(new Explosion(tileMap, (enemies.get(0).getx() - r.nextInt(40)), (enemies.get(0).gety()) - r.nextInt(120)));
+			explosions.add(new Explosion(tileMap, (enemies.get(0).getx() + r.nextInt(40)), (enemies.get(0).gety()) + r.nextInt(120)));
 			JukeBox.play("explode");
 		}
 		
-		if(eventCount == 250) {
-			tileMap.setShaking(false, 0);
+		if(eventCount == 280){
+			flash.setRemove(false);
+		}
+		
+		if(flash.getOpacity() > 0 && !flash.shouldRemove()){
+			if(flash.getOpacity() - 0.015f >= 0){
+				flash.setOpacity(flash.getOpacity()-0.015f);
+			}else{
+				flash.setRemove(true);
+			}
+		}
+		
+		if(eventCount == 360) {
 			eventBossDead = false;
 			eventCount = 0;
 			eventFinish = true;

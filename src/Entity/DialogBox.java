@@ -4,7 +4,11 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.imageio.ImageIO;
 import Main.GamePanel;
 import Audio.JukeBox;
@@ -33,19 +37,19 @@ public class DialogBox{
 		try{
 			
 			if(character == 0){
-				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/avatar.png"));
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/sigh.png"));
 			}else if(character == 1){
-				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/textavatar.png"));
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/neutral.png"));
 			}else if(character == 2){
-				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar.png"));
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/surprised.png"));
 			}else if(character == 3){
-				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar2.png"));
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/vmad.png"));
 			}else if(character == 4){
-				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar3.png"));
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/defeat.png"));
 			}else if(character == 5){
-				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar4.png"));
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/mercy.png"));
 			}else if(character == 6){
-				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar5.png"));
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/dead.png"));
 			}else if(character == 7){
 				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar6.png"));
 			}else if(character == 8){
@@ -68,19 +72,19 @@ public DialogBox(String s, int character, boolean bold){
 		try{
 			
 			if(character == 0){
-				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/avatar.png"));
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/sigh.png"));
 			}else if(character == 1){
-				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/textavatar.png"));
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/neutral.png"));
 			}else if(character == 2){
-				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar.png"));
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/surprised.png"));
 			}else if(character == 3){
-				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar2.png"));
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/vmad.png"));
 			}else if(character == 4){
-				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar3.png"));
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/defeat.png"));
 			}else if(character == 5){
-				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar4.png"));
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/mercy.png"));
 			}else if(character == 6){
-				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar5.png"));
+				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/dead.png"));
 			}else if(character == 7){
 				image = ImageIO.read(getClass().getResourceAsStream("/Sprites/Player/cavatar6.png"));
 			}else if(character == 8){
@@ -110,7 +114,14 @@ public DialogBox(String s, int character, boolean bold){
 		g.drawImage(image, 20, GamePanel.HEIGHT - 65, null);
 		g.setFont(font);
 		g.setColor(Color.WHITE);
-		g.drawString(myString, 75, GamePanel.HEIGHT - 35);
+		int y = GamePanel.HEIGHT - 35;
+		String[] line = myString.split("\n");
+		if(line.length == 1){
+			 g.drawString(myString, 75, y);
+		}else{
+			g.drawString(line[0], 75, y - g.getFontMetrics().getHeight() / 2);
+			g.drawString(line[1], 75, y + g.getFontMetrics().getHeight() / 2);
+		}
 		g.setFont(new Font("Arial", Font.BOLD, 9));
 		g.drawString("[" + nextKey + "]", GamePanel.WIDTH - 40, GamePanel.HEIGHT - 25);
 		if(i >= toPrint.length - 1){
@@ -122,9 +133,9 @@ public DialogBox(String s, int character, boolean bold){
 		}
 		
 		
-		try {
+		try{
 			Thread.sleep(30);
-		} catch (Exception e) {
+		}catch (Exception e){
 			e.printStackTrace();
 		}
 		

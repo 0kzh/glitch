@@ -36,9 +36,9 @@ public class OptionsState extends GameState {
 		
 		super(gsm);
 		currentChoice = 0;
-		try {
+		try{
 			Thread.sleep(500);
-		} catch (InterruptedException e1) {
+		}catch(InterruptedException e1){
 			e1.printStackTrace();
 		}
 		
@@ -67,22 +67,22 @@ public class OptionsState extends GameState {
 		return false;
 	}
 	
-	public void init() {
+	public void init(){
 		
 	}
 
-	public void update() {
+	public void update(){
 		handleInput();
 		bg.update();
 	}
 
-	public void draw(Graphics2D g) {
+	public void draw(Graphics2D g){
 		bg.draw(g);
 		
 		g.drawImage(logo, 70, 30, null);
 		
 		g.setFont(font);
-		for (int i = 0; i < keys.length; i++) {
+		for (int i = 0; i < keys.length; i++){
 			if( i == currentChoice){
 				g.setColor(Color.GREEN);
 			}else{
@@ -170,7 +170,9 @@ public class OptionsState extends GameState {
 		else if (currentChoice == 3){
 			// back
 			gsm.setState(GameStateManager.MENUSTATE);
-			
+			for(int i = 0; i < Keys.keyState.length; i++){
+				Keys.keyState[i] = false;
+			}
 		}
 	}
 

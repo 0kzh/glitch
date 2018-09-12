@@ -1,5 +1,6 @@
 package Entity.Enemies;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -11,6 +12,8 @@ import TileMap.TileMap;
 public class MiniBoss extends Enemy{
 	
 	private BufferedImage[] sprites;
+	private Graphics2D gg;
+	private float alpha;
 	
 	public MiniBoss(TileMap tm){
 		
@@ -26,6 +29,7 @@ public class MiniBoss extends Enemy{
 		
 		health = maxHealth = 2;
 		damage = 1;
+		alpha = 1.0f;
 		
 		// load sprites
 		try{
@@ -51,6 +55,9 @@ public class MiniBoss extends Enemy{
 		x += moveSpeed;
 	}
 	
+	public float getOpacity(){ return alpha; }
+	public void setOpacity(float a){ alpha = a; }
+	
 	public void update(){
 		
 		if(x > 1000){
@@ -72,11 +79,10 @@ public class MiniBoss extends Enemy{
 	}
 	
 	public void draw(Graphics2D g) {
-		
-		setMapPosition();
-		
-		super.draw(g);
-		
+		if(gg == null) gg = (Graphics2D) g.create();
+		gg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+//		setMapPosition();
+		super.draw(gg);
 	}
 
 }

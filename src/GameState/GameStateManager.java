@@ -2,14 +2,17 @@ package GameState;
 
 import java.awt.Graphics2D;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.Writer;
 
 import Main.GamePanel;
 
 import GameState.PauseState;
-
+import Handlers.Keys;
 import Audio.JukeBox;
 
 public class GameStateManager {
@@ -68,7 +71,6 @@ public class GameStateManager {
 		if(state == LEVEL2STATE){
 			gameStates[state] = new Level2State(this);
 		}
-		
 		
 		if(state == LEVEL3STATE){
 			gameStates[state] = new Level3State(this);

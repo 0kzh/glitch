@@ -32,9 +32,9 @@ public class Level2State extends GameState{
 	public Level2State(GameStateManager gsm){
 		super(gsm);
 		init();
-		try {
+		try{
 			gsm.save();
-		} catch (IOException e) {
+		}catch(IOException e){
 			e.printStackTrace();
 		}
 	}
@@ -54,18 +54,18 @@ public class Level2State extends GameState{
 		player.setPosition(37, 160);
 		
 		enemies = new ArrayList<Enemy>();
-		Enemy bat = new Bat(tileMap);
-		bat.setPosition(169, 135);
-		enemies.add(bat);
+//		Enemy bat = new Bat(tileMap);
+//		bat.setPosition(169, 135);
+//		enemies.add(bat);
+//		
+//		Enemy worm = new Slugger(tileMap);
+//		worm.setPosition(233, 187);
+//		enemies.add(worm);
 		
-		Enemy worm = new Slugger(tileMap);
-		worm.setPosition(233, 187);
-		enemies.add(worm);
-		
-		JukeBox.load("/Music/bg1.mp3", "level1");
+		JukeBox.load("/Music/bg.mp3", "bg");
 		JukeBox.load("/SFX/press.mp3", "press");
 		JukeBox.load("/SFX/level.mp3", "next");
-		if(!JukeBox.isPlaying("level1")) JukeBox.loop("level1", 600, JukeBox.getFrames("level1") - 2200);
+		if(!JukeBox.isPlaying("bg")) JukeBox.loop("bg", 600, JukeBox.getFrames("bg") - 2200);
 		
 	}
 
@@ -79,7 +79,7 @@ public class Level2State extends GameState{
 		long elapsed = (System.nanoTime() - timePassed) / 1000000;
 		if(elapsed > 500) player.dboxFinish = false;
 		
-		if(!talking && JukeBox.isPlaying("level1")){
+		if(!talking && JukeBox.isPlaying("bg")){
 			if(console == null){
 				handleInput();
 				player.update();
@@ -117,7 +117,7 @@ public class Level2State extends GameState{
 		tileMap.draw(g);
 		
 		//draw messages
-		if(!(player.getHealth() <= 0)){
+		if(!(player.getHealth() <= 0) && !enemies.isEmpty()){
 			for(int i = 0; i < enemies.size(); i++){
 				enemies.get(i).draw(g);
 			}

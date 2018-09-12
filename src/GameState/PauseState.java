@@ -3,6 +3,8 @@ package GameState;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+
 import Handlers.Keys;
 import Main.GamePanel;
 
@@ -34,7 +36,7 @@ public class PauseState extends GameState {
 		g.setFont(font);
 		g.drawString("Game Paused", 110, 110);
 		g.setFont(new Font("Arial", Font.PLAIN, 11));
-		g.drawString("[Esc] to resume; [Z] to quit", 95, 145);
+		g.drawString("[Esc] to resume; ["+KeyEvent.getKeyText(Keys.keyZ)+"] to quit", 95, 145);
 	}
 	
 	public void handleInput() {

@@ -19,14 +19,15 @@ public class Level0State extends GameState{
 	private DialogBox dbox;
 	private DialogBox dbox1;
 	private Player player;
-	private TextHelper[] messages = {new TextHelper("Z", 195, 181, Color.WHITE), new TextHelper("Double Jump!", 230, 135, Color.WHITE)};
+	private TextHelper[] messages = new TextHelper[2];
 	//private ArrayList<Explosion> explosions; 
 	private DialogBox[] dialog = {
-			new DialogBox("Greetings Player! Welcome to GLITCH!", 2), 
-			new DialogBox("I'm Bill, and I will be your guide today!", 2), 
-			new DialogBox("And now... for the controls:", 2),
-			new DialogBox("Use the arrow keys to move!", 2),
-			new DialogBox("Press " + KeyEvent.getKeyText(Keys.keyZ) +" to jump!", 2)}; 
+			new DialogBox("Thank god, you're finally here!", 0), 
+			new DialogBox("I'm the developer of this game,\nand I need your help.", 1),
+			new DialogBox("It seems like a virus has taken\ncontrol of the code.", 1), 
+			new DialogBox("Please help me get rid of it!", 1),
+			new DialogBox("You can use the arrow keys to move", 1),
+			new DialogBox("To jump, press " + KeyEvent.getKeyText(Keys.keyZ) + "!", 1)}; 
 	private int index;
 	private int index2 = 0;
 	private boolean keyPressed;
@@ -37,12 +38,12 @@ public class Level0State extends GameState{
 	private long timePassed;
 	public static boolean playedOnce = false;
 	
-	public Level0State(GameStateManager gsm){
+	public Level0State(GameStateManager gsm) {
 		super(gsm);
 		init();
-		try {
+		try{
 			gsm.save();
-		} catch (IOException e) {
+		}catch(IOException e){
 			e.printStackTrace();
 		}
 	}
@@ -52,7 +53,7 @@ public class Level0State extends GameState{
 		fs = new FillScreen(Color.BLACK);
 		
 		if(!KeyEvent.getKeyText(Keys.keyLeft).equals("Left") || !KeyEvent.getKeyText(Keys.keyRight).equals("Right")){
-			dialog[3] = new DialogBox("Use " + KeyEvent.getKeyText(Keys.keyLeft) + " and " + KeyEvent.getKeyText(Keys.keyRight) + " to move!", 2);
+			dialog[4] = new DialogBox("You can use " + KeyEvent.getKeyText(Keys.keyLeft) + " and " + KeyEvent.getKeyText(Keys.keyRight) + " to move.", 1);
 		}
 		
 		//load and initialize tilemap & background
@@ -61,6 +62,8 @@ public class Level0State extends GameState{
 		tileMap.loadMap("/Maps/intro.map");
 		tileMap.setPosition(0, 0);
 		tileMap.setTween(1);
+		messages[0] = new TextHelper(tileMap, KeyEvent.getKeyText(Keys.keyZ), 195, 181, Color.WHITE);
+		messages[1] = new TextHelper(tileMap, "Double Jump!", 230, 135, Color.WHITE);
 		
 		bg = new Background("/Backgrounds/gamebg.png", 0.1);
 		player = new Player(tileMap);
@@ -77,7 +80,6 @@ public class Level0State extends GameState{
 	private void printDialogue() {
 		if(index < dialog.length){
 			dbox = dialog[index];
-			JukeBox.stop("bg");
 			talking = true;
 		}else{
 			fs.setRemove(true);
@@ -96,13 +98,6 @@ public class Level0State extends GameState{
 		if(!talking){
 			handleInput();
 			player.update();
-			
-			if(player.getx() < 205 && player.gety() < 75){
-				if(dbox1 == null){
-					dbox1 = new DialogBox("Pet that cat to advance to the next level!", 2);
-					talking = true;
-				}
-			}
 			
 			if(player.tl == Tile.DAMAGING || player.tr == Tile.DAMAGING || player.bl == Tile.DAMAGING || player.br == Tile.DAMAGING){
 				JukeBox.stop("bg");
@@ -165,22 +160,6 @@ public class Level0State extends GameState{
 			dbox1.draw(g);
 		}
 		try{
-			if(!fs.shouldRemove()){
-				fs.draw(g);
-			}else{
-				
-				if(index2 < 30){
-					g.setColor(Color.BLACK);
-					g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT / 2 - (index2 * GamePanel.HEIGHT / 60));
-					g.fillRect(0, GamePanel.HEIGHT / 2 + (index2 * GamePanel.HEIGHT / 60), GamePanel.WIDTH, GamePanel.HEIGHT / 2);
-					Thread.sleep(10);
-					index2++;
-				}else{
-					JukeBox.resume("bg", true);
-					
-				}
-			}
-			
 			if(!dbox.shouldRemove()){
 				dbox.draw(g);
 				if(Keys.isPressed(Keys.BUTTON1) && !keyPressed && dbox.isDone()){
@@ -189,8 +168,7 @@ public class Level0State extends GameState{
 				}else if(!Keys.isPressed(Keys.BUTTON1)){
 					keyPressed = false;
 				}
-			}
-			else if(index < dialog.length){
+			} else if(index < dialog.length){
 				index++;
 			}
 		}catch(Exception e){

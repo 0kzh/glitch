@@ -21,7 +21,7 @@ public class Level5State extends GameState{
 	private DialogBox dbox1;
 	private Player player;
 	private ArrayList<Enemy> enemies;
-	private TextHelper[] messages = {new TextHelper("It's never too late to give up.", 25, 107, Color.WHITE)};
+	private TextHelper[] messages = {};
 	private int index2 = 0;
 	private boolean talking;
 	private boolean pauseKeyPressed;
@@ -33,12 +33,12 @@ public class Level5State extends GameState{
 		init();
 		try {
 			gsm.save();
-		} catch (IOException e) {
+		}catch(IOException e){
 			e.printStackTrace();
 		}
 	}
 	
-	public void init() {
+	public void init(){
 		//initialize tile map
 		tileMap = new TileMap(16);
 		tileMap.loadTiles("/Tilesets/texttileset.png");
@@ -55,9 +55,9 @@ public class Level5State extends GameState{
 		//hud = new HUD(player);
 		
 		enemies = new ArrayList<Enemy>();
-		Enemy bat = new VertBat(tileMap);
-		bat.setPosition(201, 44);
-		enemies.add(bat);
+//		Enemy bat = new VertBat(tileMap);
+//		bat.setPosition(201, 44);
+//		enemies.add(bat);
 		
 		if(JukeBox.isPlaying("level1")) JukeBox.stop("level3");
 		
@@ -118,14 +118,14 @@ public class Level5State extends GameState{
 		//draw tilemap
 		tileMap.draw(g);
 		
-		if(!(player.getHealth() <= 0)){
+		if(!(player.getHealth() <= 0) && !enemies.isEmpty()){
 			for(int i = 0; i < enemies.size(); i++){
 				enemies.get(i).draw(g);
 			}
 		}
 		
 		//draw messages
-		if(!(player.getHealth() <= 0)){
+		if(!(player.getHealth() <= 0) && !tileMap.isInvisible()){
 			for(int i = 0; i < messages.length; i++){
 				messages[i].draw(g);
 			}
