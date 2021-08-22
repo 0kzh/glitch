@@ -1,0 +1,6 @@
+.idea
+.settings
+save.txt
+**/.DS_Store
+**/*.class
+bin

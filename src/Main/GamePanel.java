@@ -9,7 +9,6 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-import com.apple.eawt.Application;
 
 import Handlers.Keys;
 

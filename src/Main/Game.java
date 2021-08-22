@@ -5,7 +5,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
-import com.apple.eawt.Application;
+//import com.apple.eawt.Application;
 
 public class Game {
 
@@ -25,7 +25,7 @@ public class Game {
 			window.setIconImage(ImageIO.read(Game.class.getResourceAsStream("/Misc/glitch.png")));
 			if(OS.indexOf("mac") >= 0){
 				//set dock icon
-				Application.getApplication().setDockIconImage(ImageIO.read(Game.class.getResourceAsStream("/Misc/glitch.png")));
+//				Application.getApplication().setDockIconImage(ImageIO.read(Game.class.getResourceAsStream("/Misc/glitch.png")));
 				//disable long press accent menu while in game
 				Process p = Runtime.getRuntime().exec("defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false");
 			}

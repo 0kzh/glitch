@@ -1,8 +1,6 @@
 package Entity;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
@@ -112,6 +110,8 @@ public DialogBox(String s, int character, boolean bold){
 		g.setColor(new Color(52, 73, 94));
 		g.fillRect(20, GamePanel.HEIGHT - 60, GamePanel.WIDTH - 40, 41);
 		g.drawImage(image, 20, GamePanel.HEIGHT - 65, null);
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setFont(font);
 		g.setColor(Color.WHITE);
 		int y = GamePanel.HEIGHT - 35;
